@@ -1,177 +1,291 @@
 {% comment %}
   File: sections/header-custom.liquid
-  Usage: Add this as a section, then set your menus/colors in the Theme Editor.
+  "Custom Header (1200px)" — 3 rows: Utility, Middle, Categories
+  SVG logo supported + editable dimensions.
 {% endcomment %}
 
 <section class="pw-header" data-section-id="{{ section.id }}">
-    <style>
-      .pw-container{max-width:1200px;margin:0 auto;padding:0 16px;box-sizing:border-box}
-      .pw-topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:6px 0;font-size:12px;background:{{ section.settings.topbar_bg | default: 'transparent' }};color:{{ section.settings.topbar_text_color }}}
-      .pw-topbar a{color:{{ section.settings.topbar_link_color }};text-decoration:none}
-      .pw-topbar .pw-help{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
-      .pw-topbar .pw-upper-menu{display:flex;gap:14px;flex-wrap:wrap}
-      .pw-topbar .pw-social{display:flex;gap:10px}
-      .pw-social a{display:inline-flex;line-height:0}
-  
-      .pw-mid{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:10px 0}
-      .pw-logo img{max-height:42px;width:auto}
-      .pw-cta{display:flex;align-items:center;gap:18px}
-      .pw-cta a{display:flex;align-items:center;gap:6px;color:{{ section.settings.mid_link_color }};text-decoration:none;font-size:13px}
-      .pw-cta svg{width:18px;height:18px}
-  
-      .pw-mainnav{background:{{ section.settings.mainnav_bg_color }}}
-      .pw-mainnav .pw-container{display:flex;align-items:center;justify-content:space-between}
-      .pw-menu{display:flex;gap:22px;flex-wrap:wrap}
-      .pw-menu a{color:{{ section.settings.mainnav_link_color }};text-decoration:none;font-weight:600;padding:12px 0;display:block}
-      .pw-hamburger{display:none;background:none;border:0;padding:10px;margin:-10px;cursor:pointer}
-      .pw-hamburger span{display:block;width:22px;height:2px;background:{{ section.settings.mainnav_link_color }};margin:5px 0}
-  
-      .pw-cart-count{min-width:16px;height:16px;border-radius:999px;font-size:11px;display:inline-flex;align-items:center;justify-content:center;padding:0 4px;background:{{ section.settings.cart_badge_bg }};color:{{ section.settings.cart_badge_color }}}
-  
-      /* Mobile */
-      @media (max-width: 990px){
-        .pw-topbar .pw-upper-menu{display:none}
-        .pw-mid{gap:10px}
-        .pw-menu{display:none;flex-direction:column;width:100%}
-        .pw-mainnav .pw-container{flex-wrap:wrap}
-        .pw-hamburger{display:inline-block}
-        .pw-menu.show{display:flex}
-        .pw-cta a span.label{display:none} /* hide text labels on mobile to keep compact */
-      }
-    </style>
-  
-    <!-- Top bar -->
-    <div class="pw-topbar">
-      <div class="pw-container">
-        <div class="pw-topbar" style="background:none;padding:0">
-          <div class="pw-help">
-            {% if section.settings.help_text != blank %}
-              <span>{{ section.settings.help_text }}</span>
-            {% endif %}
-            {% if section.settings.help_email != blank %}
-              <a href="mailto:{{ section.settings.help_email }}">{{ section.settings.help_email }}</a>
-            {% endif %}
-          </div>
-  
-          <nav class="pw-upper-menu" aria-label="Upper menu">
-            {% if section.settings.upper_menu != blank %}
+  <style>
+    :root {
+      --pw-max: {{ section.settings.max_width | default: 1200 }};
+      --pw-font: {{ section.settings.base_font | default: 'inherit' }};
+      --pw-top-bg: {{ section.settings.topbar_bg }};
+      --pw-top-color: {{ section.settings.topbar_text_color }};
+      --pw-top-link: {{ section.settings.topbar_link_color }};
+      --pw-mid-bg: {{ section.settings.mid_bg }};
+      --pw-mid-link: {{ section.settings.mid_link_color }};
+      --pw-mid-icon: {{ section.settings.mid_icon_color }};
+      --pw-search-bg: {{ section.settings.search_bg }};
+      --pw-search-border: {{ section.settings.search_border }};
+      --pw-search-text: {{ section.settings.search_text }};
+      --pw-cat-bg: {{ section.settings.mainnav_bg_color }};
+      --pw-cat-link: {{ section.settings.mainnav_link_color }};
+      --pw-cat-hover: {{ section.settings.mainnav_link_hover }};
+      --pw-cart-badge-bg: {{ section.settings.cart_badge_bg }};
+      --pw-cart-badge-color: {{ section.settings.cart_badge_color }};
+      --pw-top-size: {{ section.settings.topbar_font_size | default: 12 }}px;
+      --pw-cat-weight: {{ section.settings.menu_weight | default: 700 }};
+      --logo-max-w: {{ section.settings.logo_max_width | default: 260 }}px;
+      --logo-max-h: {{ section.settings.logo_max_height | default: 42 }}px;
+    }
+
+    .pw-container{max-width:calc(var(--pw-max)*1px);margin:0 auto;padding:0 16px;box-sizing:border-box}
+    .pw-header{font-family:var(--pw-font)}
+    a{color:inherit}
+
+    /* Top utility bar */
+    .pw-topbar{background:var(--pw-top-bg);color:var(--pw-top-color);font-size:var(--pw-top-size)}
+    .pw-topbar .row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:6px 0}
+    .pw-topbar .left, .pw-topbar .right{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+    .pw-topbar a{color:var(--pw-top-link);text-decoration:none}
+    .pw-topbar .upper-menu{display:flex;gap:14px;flex-wrap:wrap}
+    .pw-social{display:flex;gap:10px}
+    .pw-ico{width:18px;height:18px;display:inline-block;color:currentColor}
+
+    /* Middle row */
+    .pw-mid{background:var(--pw-mid-bg)}
+    .pw-mid .row{display:flex;align-items:center;gap:16px;padding:12px 0}
+    .pw-logo img{max-width:var(--logo-max-w);max-height:var(--logo-max-h);height:auto;width:auto;display:block}
+    .pw-grow{flex:1 1 auto}
+    .pw-search{display:flex;align-items:center;width:100%;max-width:760px;background:var(--pw-search-bg);border:1px solid var(--pw-search-border);border-radius:6px;overflow:hidden}
+    .pw-search .ico{width:18px;height:18px;margin:0 10px;color:var(--pw-search-text);opacity:.8}
+    .pw-search input{appearance:none;border:0;outline:0;background:transparent;padding:10px;font-size:14px;color:var(--pw-search_text, var(--pw-search-text));width:100%}
+    .pw-cta{display:flex;align-items:center;gap:20px;margin-left:auto}
+    .pw-cta a{display:flex;align-items:center;gap:8px;color:var(--pw-mid-link);text-decoration:none;font-size:13px}
+    .pw-cta .ico{width:20px;height:20px;color:var(--pw-mid-icon)}
+    .pw-cart-count{min-width:16px;height:16px;border-radius:999px;font-size:11px;display:inline-flex;align-items:center;justify-content:center;padding:0 4px;background:var(--pw-cart-badge-bg);color:var(--pw-cart-badge-color);margin-left:4px}
+
+    /* Bottom categories bar */
+    .pw-mainnav{background:var(--pw-cat-bg)}
+    .pw-mainnav .row{display:flex;align-items:center;gap:16px}
+    .pw-hamburger{display:none;background:none;border:0;padding:12px;margin:-12px;cursor:pointer}
+    .pw-hamburger span{display:block;width:22px;height:2px;background:var(--pw-cat-link);margin:5px 0}
+    .pw-menu{display:flex;gap:26px;flex-wrap:wrap}
+    .pw-menu a{color:var(--pw-cat-link);text-decoration:none;font-weight:var(--pw-cat-weight);padding:12px 0;display:block;letter-spacing:.1px}
+    .pw-menu a:hover{color:var(--pw-cat-hover)}
+    .pw-badge{display:flex;align-items:center;gap:8px;margin-left:auto;color:var(--pw-top-color)}
+    .pw-badge .icon-flame{width:18px;height:18px}
+
+    /* Mobile */
+    @media (max-width: 1140px){
+      .pw-search{max-width:620px}
+    }
+    @media (max-width: 990px){
+      .pw-topbar .upper-menu{display:none}
+      .pw-search{order:3}
+      .pw-cta a .label{display:none}
+      .pw-hamburger{display:inline-block}
+      .pw-mainnav .row{flex-wrap:wrap}
+      .pw-menu{display:none;flex-direction:column;width:100%}
+      .pw-menu.show{display:flex}
+    }
+  </style>
+
+  <!-- Top utility bar -->
+  <div class="pw-topbar">
+    <div class="pw-container">
+      <div class="row">
+        <div class="left">
+          {% if section.settings.phone_number != blank %}
+            <a href="tel:{{ section.settings.phone_number | replace: ' ', '' }}">
+              <span class="pw-ico" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.6 10.8c1.7 3.1 3.5 4.9 6.6 6.6l2.2-2.2a1 1 0 011.1-.24c1.2.49 2.5.76 3.8.8a1 1 0 011 .99V21a1 1 0 01-1 1C10.3 22 2 13.7 2 3a1 1 0 011-1h3.05a1 1 0 01.99 1c.04 1.3.31 2.6.8 3.8a1 1 0 01-.24 1.1L6.6 10.8z"/></svg>
+              </span>
+              <span>{{ section.settings.phone_label | default: '' }} {{ section.settings.phone_number }}</span>
+            </a>
+          {% endif %}
+        </div>
+
+        <div class="right">
+          {% if section.settings.upper_menu != blank %}
+            <nav class="upper-menu" aria-label="Top menu">
               {% for link in linklists[section.settings.upper_menu].links %}
                 <a href="{{ link.url }}">{{ link.title }}</a>
               {% endfor %}
-            {% endif %}
-          </nav>
-  
-          <div class="pw-social">
+            </nav>
+          {% endif %}
+
+          <div class="pw-social" aria-label="Social links">
             {% if section.settings.facebook_url != blank %}
-              <a href="{{ section.settings.facebook_url }}" aria-label="Facebook">
-                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M22 12.07C22 6.48 17.52 2 11.93 2S2 6.48 2 12.07c0 5 3.66 9.14 8.44 9.93v-7.02H7.9v-2.91h2.54V9.41c0-2.5 1.49-3.88 3.77-3.88 1.09 0 2.23.19 2.23.19v2.45h-1.26c-1.24 0-1.63.77-1.63 1.56v1.87h2.78l-.44 2.91h-2.34V22c4.78-.79 8.44-4.93 8.44-9.93z"/></svg>
+              <a href="{{ section.settings.facebook_url }}" aria-label="Facebook" rel="noopener">
+                <span class="pw-ico">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22 12.07C22 6.48 17.52 2 11.93 2S2 6.48 2 12.07c0 5 3.66 9.14 8.44 9.93v-7.02H7.9v-2.91h2.54V9.41c0-2.5 1.49-3.88 3.77-3.88 1.09 0 2.23.19 2.23.19v2.45h-1.26c-1.24 0-1.63.77-1.63 1.56v1.87h2.78l-.44 2.91h-2.34V22c4.78-.79 8.44-4.93 8.44-9.93z"/></svg>
+                </span>
               </a>
             {% endif %}
             {% if section.settings.instagram_url != blank %}
-              <a href="{{ section.settings.instagram_url }}" aria-label="Instagram">
-                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3H7zm5 3.5A5.5 5.5 0 1 1 6.5 13 5.51 5.51 0 0 1 12 7.5zm0 2A3.5 3.5 0 1 0 15.5 13 3.5 3.5 0 0 0 12 9.5zm5.75-2.9a1.15 1.15 0 1 1-1.15 1.15 1.15 1.15 0 0 1 1.15-1.15z"/></svg>
+              <a href="{{ section.settings.instagram_url }}" aria-label="Instagram" rel="noopener">
+                <span class="pw-ico">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 2h10a5 5 0 015 5v10a5 5 0 01-5 5H7a5 5 0 01-5-5V7a5 5 0 015-5zm0 2a3 3 0 00-3 3v10a3 3 0 003 3h10a3 3 0 003-3V7a3 3 0 00-3-3H7zm5 3.5A5.5 5.5 0 116.5 13 5.51 5.51 0 0112 7.5zm0 2A3.5 3.5 0 1015.5 13 3.5 3.5 0 0012 9.5zm5.75-2.9a1.15 1.15 0 11-1.15 1.15 1.15 1.15 0 011.15-1.15z"/></svg>
+                </span>
               </a>
             {% endif %}
             {% if section.settings.x_url != blank %}
-              <a href="{{ section.settings.x_url }}" aria-label="X">
-                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.9 2H22l-7.61 8.7L23.5 22h-6.9l-5.4-6.52L5 22H2l8.17-9.34L.5 2h7l4.89 5.93L18.9 2Zm-2.42 18h1.38L7.64 4h-1.4l10.24 16Z"/></svg>
+              <a href="{{ section.settings.x_url }}" aria-label="X" rel="noopener">
+                <span class="pw-ico">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 2H22l-7.61 8.7L23.5 22h-6.9l-5.4-6.52L5 22H2l8.17-9.34L.5 2h7l4.89 5.93L18.9 2Zm-2.42 18h1.38L7.64 4h-1.4l10.24 16Z"/></svg>
+                </span>
               </a>
             {% endif %}
           </div>
         </div>
       </div>
     </div>
-  
-    <!-- Middle row: logo + account/cart -->
-    <div class="pw-mid">
-      <div class="pw-container">
-        <div class="pw-mid" style="padding:0">
-          <a class="pw-logo" href="{{ routes.root_url }}" aria-label="Home">
-            {% if section.settings.logo != blank %}
-              <img src="{{ section.settings.logo | image_url: width: 260 }}" alt="{{ shop.name }}">
+  </div>
+
+  <!-- Middle: logo | search | account/cart -->
+  <div class="pw-mid">
+    <div class="pw-container">
+      <div class="row">
+        <a class="pw-logo" href="{{ routes.root_url }}" aria-label="Home">
+          {% if section.settings.logo != blank %}
+            {% assign logo_url = section.settings.logo | image_url %}
+            {% assign logo_ext = logo_url | split: '?' | first | split: '.' | last | downcase %}
+            {% if logo_ext == 'svg' %}
+              <img src="{{ logo_url }}" alt="{{ shop.name }}">
             {% else %}
-              <strong>{{ shop.name }}</strong>
+              {%- comment -%}
+                For raster images, you can still serve a sized rendition.
+                We keep CSS max-width/height in control for both types.
+              {%- endcomment -%}
+              <img src="{{ section.settings.logo | image_url: width: section.settings.logo_max_width | default: 260 }}" alt="{{ shop.name }}">
             {% endif %}
-          </a>
-  
-          <div class="pw-cta">
-            <a href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}">
-              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm0 2c-5 0-9 2.5-9 5.5V22h18v-2.5C21 16.5 17 14 12 14Z"/></svg>
-              <span class="label">{% if customer %}My Account{% else %}Sign in / Join Free{% endif %}</span>
-            </a>
-  
-            <a href="{{ routes.cart_url }}">
-              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 18a2 2 0 1 0 2 2 2 2 0 0 0-2-2Zm10 0a2 2 0 1 0 2 2 2 2 0 0 0-2-2ZM7.2 6l.6 3h10.9a1 1 0 0 1 .98 1.2l-1.3 6a2 2 0 0 1-2 .8H8.3a2 2 0 0 1-2-1.6L4.3 4H2V2h3a1 1 0 0 1 1 .8L7.2 6Z"/></svg>
-              {% if cart != empty and cart.item_count > 0 %}
-                <span class="pw-cart-count">{{ cart.item_count }}</span>
-              {% endif %}
-              <span class="label">Cart</span>
-            </a>
+          {% else %}
+            <strong style="font-size:20px;color:var(--pw-mid-link)">{{ shop.name }}</strong>
+          {% endif %}
+        </a>
+
+        {% if section.settings.show_search %}
+          <div class="pw-grow">
+            <form class="pw-search" action="{{ routes.search_url }}" method="get" role="search" aria-label="Site search">
+              <input type="hidden" name="type" value="product">
+              <span class="ico" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 20.29l-4.2-4.2A7.5 7.5 0 1016.09 17L20.3 21.2 21 20.29zM4.5 10.5a6 6 0 1112 0 6 6 0 01-12 0z"/></svg>
+              </span>
+              <input name="q" autocomplete="off" placeholder="{{ section.settings.search_placeholder | escape }}" />
+            </form>
           </div>
+        {% else %}
+          <div class="pw-grow"></div>
+        {% endif %}
+
+        <div class="pw-cta">
+          <a href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}">
+            <span class="ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm0 2c-5 0-9 2.5-9 5.5V22h18v-2.5C21 16.5 17 14 12 14Z"/></svg>
+            </span>
+            <span class="label">{{ section.settings.account_label | default: 'My Account' }}</span>
+          </a>
+
+          <a href="{{ routes.cart_url }}">
+            <span class="ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 18a2 2 0 1 0 2 2 2 2 0 0 0-2-2Zm10 0a2 2 0 1 0 2 2 2 2 0 0 0-2-2ZM7.2 6l.6 3h10.9a1 1 0 0 1 .98 1.2l-1.3 6a2 2 0 0 1-2 .8H8.3a2 2 0 0 1-2-1.6L4.3 4H2V2h3a1 1 0 0 1 1 .8L7.2 6Z"/></svg>
+            </span>
+            {% if cart != empty and cart.item_count > 0 %}
+              <span class="pw-cart-count">{{ cart.item_count }}</span>
+            {% endif %}
+            <span class="label">{{ section.settings.cart_label | default: 'My Cart' }}</span>
+          </a>
         </div>
       </div>
     </div>
-  
-    <!-- Main navigation -->
-    <div class="pw-mainnav">
-      <div class="pw-container">
+  </div>
+
+  <!-- Bottom categories nav (red stripe) -->
+  <div class="pw-mainnav">
+    <div class="pw-container">
+      <div class="row">
         <button class="pw-hamburger" aria-label="Toggle menu" aria-controls="pw-menu-{{ section.id }}" aria-expanded="false">
           <span></span><span></span><span></span>
         </button>
-        <nav id="pw-menu-{{ section.id }}" class="pw-menu" aria-label="Main menu">
+
+        <nav id="pw-menu-{{ section.id }}" class="pw-menu" aria-label="Categories">
           {% if section.settings.main_menu != blank %}
             {% for link in linklists[section.settings.main_menu].links %}
               <a href="{{ link.url }}">{{ link.title }}</a>
             {% endfor %}
           {% endif %}
         </nav>
+
+        {% if section.settings.badge_text != blank %}
+          <div class="pw-badge" aria-label="Promo">
+            <span class="icon-flame" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 2s.5 2.5-1.5 4.5S8 9 8 12a4 4 0 0 0 8 0c0-2-1-3.5-1-3.5s3 1 3 5.5a6 6 0 1 1-12 0C6 9 9 6.5 10.5 5S13.5 2 13.5 2z"/></svg>
+            </span>
+            <span>{{ section.settings.badge_text }}</span>
+          </div>
+        {% endif %}
       </div>
     </div>
-  
-    <script>
-      (function(){
-        var btn = document.currentScript.parentElement.querySelector('.pw-hamburger');
-        var menu = document.currentScript.parentElement.querySelector('.pw-menu');
-        if(!btn||!menu) return;
-        btn.addEventListener('click', function(){
-          var open = menu.classList.toggle('show');
-          btn.setAttribute('aria-expanded', open ? 'true' : 'false');
-        });
-      })();
-    </script>
-  </section>
-  
-  {% schema %}
-  {
-    "name": "Custom Header (1200px)",
-    "settings": [
-      { "type": "image_picker", "id": "logo", "label": "Logo" },
-      { "type": "text", "id": "help_text", "label": "Need help text", "default": "Need help?" },
-      { "type": "text", "id": "help_email", "label": "Help email", "default": "support@example.com" },
-  
-      { "type": "link_list", "id": "upper_menu", "label": "Upper menu" },
-      { "type": "link_list", "id": "main_menu", "label": "Main menu" },
-  
-      { "type": "url", "id": "facebook_url", "label": "Facebook URL" },
-      { "type": "url", "id": "instagram_url", "label": "Instagram URL" },
-      { "type": "url", "id": "x_url", "label": "X (Twitter) URL" },
-  
-      { "type": "color", "id": "topbar_bg", "label": "Topbar background", "default": "#ffffff" },
-      { "type": "color", "id": "topbar_text_color", "label": "Topbar text color", "default": "#111111" },
-      { "type": "color", "id": "topbar_link_color", "label": "Topbar link color", "default": "#0a3a8e" },
-  
-      { "type": "color", "id": "mid_link_color", "label": "Account/Cart link color", "default": "#0a3a8e" },
-  
-      { "type": "color", "id": "mainnav_bg_color", "label": "Main nav background", "default": "#072f77" },
-      { "type": "color", "id": "mainnav_link_color", "label": "Main nav link color", "default": "#ffffff" },
-  
-      { "type": "color", "id": "cart_badge_bg", "label": "Cart badge background", "default": "#ff3b30" },
-      { "type": "color", "id": "cart_badge_color", "label": "Cart badge text color", "default": "#ffffff" }
-    ],
-    "blocks": [],
-    "presets": [
-      { "name": "Custom Header (1200px)", "category": "Header" }
-    ]
-  }
-  {% endschema %}
-  
+  </div>
+
+  <script>
+    (function(){
+      var root = document.currentScript.parentElement;
+      var btn = root.querySelector('.pw-hamburger');
+      var menu = root.querySelector('.pw-menu');
+      if(!btn||!menu) return;
+      btn.addEventListener('click', function(){
+        var open = menu.classList.toggle('show');
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    })();
+  </script>
+</section>
+
+{% schema %}
+{
+  "name": "Custom Header (1200px)",
+  "settings": [
+    { "type": "range", "id": "max_width", "min": 960, "max": 1440, "step": 20, "unit": "px", "label": "Max width", "default": 1200 },
+    { "type": "text", "id": "base_font", "label": "Base font family (optional)", "default": "" },
+
+    /* Logo (SVG friendly) */
+    { "type": "header", "content": "Logo" },
+    { "type": "image_picker", "id": "logo", "label": "Logo image (SVG or raster)" },
+    { "type": "range", "id": "logo_max_width", "min": 80, "max": 400, "step": 4, "unit": "px", "label": "Logo max width", "default": 260 },
+    { "type": "range", "id": "logo_max_height", "min": 24, "max": 120, "step": 2, "unit": "px", "label": "Logo max height", "default": 42 },
+
+    /* Top bar */
+    { "type": "header", "content": "Top (Utility) Bar" },
+    { "type": "text", "id": "phone_label", "label": "Phone label", "default": "+(94)" },
+    { "type": "text", "id": "phone_number", "label": "Phone number", "default": "117 817 870" },
+    { "type": "link_list", "id": "upper_menu", "label": "Top menu" },
+    { "type": "url", "id": "facebook_url", "label": "Facebook URL" },
+    { "type": "url", "id": "instagram_url", "label": "Instagram URL" },
+    { "type": "url", "id": "x_url", "label": "X (Twitter) URL" },
+    { "type": "color", "id": "topbar_bg", "label": "Topbar background", "default": "#ffffff" },
+    { "type": "color", "id": "topbar_text_color", "label": "Topbar text color", "default": "#2b2b2b" },
+    { "type": "color", "id": "topbar_link_color", "label": "Topbar link color", "default": "#0a3a8e" },
+    { "type": "range", "id": "topbar_font_size", "min": 10, "max": 14, "step": 1, "unit": "px", "label": "Topbar font size", "default": 12 },
+
+    /* Middle */
+    { "type": "header", "content": "Middle Row" },
+    { "type": "color", "id": "mid_bg", "label": "Middle background", "default": "#ffffff" },
+    { "type": "color", "id": "mid_link_color", "label": "Label/link color", "default": "#222222" },
+    { "type": "color", "id": "mid_icon_color", "label": "Icon color", "default": "#222222" },
+    { "type": "text", "id": "account_label", "label": "Account label", "default": "My Account" },
+    { "type": "text", "id": "cart_label", "label": "Cart label", "default": "My Cart" },
+
+    { "type": "checkbox", "id": "show_search", "label": "Show search box", "default": true },
+    { "type": "text", "id": "search_placeholder", "label": "Search placeholder", "default": "Search Products" },
+    { "type": "color", "id": "search_bg", "label": "Search background", "default": "#efefef" },
+    { "type": "color", "id": "search_border", "label": "Search border", "default": "#e3e3e3" },
+    { "type": "color", "id": "search_text", "label": "Search text color", "default": "#333333" },
+
+    { "type": "color", "id": "cart_badge_bg", "label": "Cart badge background", "default": "#000000" },
+    { "type": "color", "id": "cart_badge_color", "label": "Cart badge text color", "default": "#ffffff" },
+
+    /* Bottom menu */
+    { "type": "header", "content": "Bottom Categories Bar" },
+    { "type": "link_list", "id": "main_menu", "label": "Categories menu" },
+    { "type": "text", "id": "badge_text", "label": "Right-side badge text (optional)", "default": "" },
+    { "type": "color", "id": "mainnav_bg_color", "label": "Bar background", "default": "#e30613" },
+    { "type": "color", "id": "mainnav_link_color", "label": "Link color", "default": "#ffffff" },
+    { "type": "color", "id": "mainnav_link_hover", "label": "Link hover color", "default": "#ffe8e8" },
+    { "type": "range", "id": "menu_weight", "min": 400, "max": 800, "step": 50, "label": "Menu font weight", "default": 700 }
+  ],
+  "blocks": [],
+  "presets": [{ "name": "Custom Header (1200px)", "category": "Header" }]
+}
+{% endschema %}
