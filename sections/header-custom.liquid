@@ -49,7 +49,7 @@
     .pw-grow{flex:1 1 auto}
     .pw-search{display:flex;align-items:center;width:100%;max-width:760px;background:var(--pw-search-bg);border:1px solid var(--pw-search-border);border-radius:6px;overflow:hidden}
     .pw-search .ico{width:18px;height:18px;margin:0 10px;color:var(--pw-search-text);opacity:.8}
-    .pw-search input{appearance:none;border:0;outline:0;background:transparent;padding:10px;font-size:14px;color:var(--pw-search_text, var(--pw-search-text));width:100%}
+    .pw-search input{appearance:none;border:0;outline:0;background:transparent;padding:10px;font-size:14px;color:var(--pw-search-text);width:100%}
     .pw-cta{display:flex;align-items:center;gap:20px;margin-left:auto}
     .pw-cta a{display:flex;align-items:center;gap:8px;color:var(--pw-mid-link);text-decoration:none;font-size:13px}
     .pw-cta .ico{width:20px;height:20px;color:var(--pw-mid-icon)}
@@ -144,11 +144,8 @@
             {% if logo_ext == 'svg' %}
               <img src="{{ logo_url }}" alt="{{ shop.name }}">
             {% else %}
-              {%- comment -%}
-                For raster images, you can still serve a sized rendition.
-                We keep CSS max-width/height in control for both types.
-              {%- endcomment -%}
-              <img src="{{ section.settings.logo | image_url: width: section.settings.logo_max_width | default: 260 }}" alt="{{ shop.name }}">
+              {% assign logo_w = section.settings.logo_max_width | default: 260 %}
+              <img src="{{ section.settings.logo | image_url: width: logo_w }}" alt="{{ shop.name }}">
             {% endif %}
           {% else %}
             <strong style="font-size:20px;color:var(--pw-mid-link)">{{ shop.name }}</strong>
@@ -238,15 +235,13 @@
   "name": "Custom Header (1200px)",
   "settings": [
     { "type": "range", "id": "max_width", "min": 960, "max": 1440, "step": 20, "unit": "px", "label": "Max width", "default": 1200 },
-    { "type": "text", "id": "base_font", "label": "Base font family (optional)", "default": "" },
+    { "type": "text", "id": "base_font", "label": "Base font family (optional)", "default": "inherit" },
 
-    /* Logo (SVG friendly) */
     { "type": "header", "content": "Logo" },
     { "type": "image_picker", "id": "logo", "label": "Logo image (SVG or raster)" },
     { "type": "range", "id": "logo_max_width", "min": 80, "max": 400, "step": 4, "unit": "px", "label": "Logo max width", "default": 260 },
     { "type": "range", "id": "logo_max_height", "min": 24, "max": 120, "step": 2, "unit": "px", "label": "Logo max height", "default": 42 },
 
-    /* Top bar */
     { "type": "header", "content": "Top (Utility) Bar" },
     { "type": "text", "id": "phone_label", "label": "Phone label", "default": "+(94)" },
     { "type": "text", "id": "phone_number", "label": "Phone number", "default": "117 817 870" },
@@ -259,7 +254,6 @@
     { "type": "color", "id": "topbar_link_color", "label": "Topbar link color", "default": "#0a3a8e" },
     { "type": "range", "id": "topbar_font_size", "min": 10, "max": 14, "step": 1, "unit": "px", "label": "Topbar font size", "default": 12 },
 
-    /* Middle */
     { "type": "header", "content": "Middle Row" },
     { "type": "color", "id": "mid_bg", "label": "Middle background", "default": "#ffffff" },
     { "type": "color", "id": "mid_link_color", "label": "Label/link color", "default": "#222222" },
@@ -276,10 +270,9 @@
     { "type": "color", "id": "cart_badge_bg", "label": "Cart badge background", "default": "#000000" },
     { "type": "color", "id": "cart_badge_color", "label": "Cart badge text color", "default": "#ffffff" },
 
-    /* Bottom menu */
     { "type": "header", "content": "Bottom Categories Bar" },
     { "type": "link_list", "id": "main_menu", "label": "Categories menu" },
-    { "type": "text", "id": "badge_text", "label": "Right-side badge text (optional)", "default": "" },
+    { "type": "text", "id": "badge_text", "label": "Right-side badge text (optional)", "default": "Hot deals" },
     { "type": "color", "id": "mainnav_bg_color", "label": "Bar background", "default": "#e30613" },
     { "type": "color", "id": "mainnav_link_color", "label": "Link color", "default": "#ffffff" },
     { "type": "color", "id": "mainnav_link_hover", "label": "Link hover color", "default": "#ffe8e8" },
