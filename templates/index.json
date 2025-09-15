@@ -190,6 +190,9 @@
     },
     "custom_product_grid_HGQnVm": {
       "type": "custom-product-grid",
+      "custom_css": [
+        ".product-grid-basic {background: #e0e0e0;}"
+      ],
       "name": "Product Grid (Basic)",
       "settings": {
         "heading": "Featured Products",
