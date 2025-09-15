@@ -3,7 +3,6 @@
   Brand logos with two display modes:
   - "carousel": slider with per-view controls, arrows, dots, autoplay
   - "marquee": seamless auto-scroll
-  Backward compatible with the previous "Brand Logos (Basic)" schema.
 {% endcomment %}
 
 <section class="brand-strip" data-section-id="{{ section.id }}" style="background: {{ section.settings.bg }}">
@@ -20,7 +19,7 @@
       /* shared */
       #bs-viewport-{{ section.id }}{ overflow: hidden; position: relative; }
       #bs-track-{{ section.id }}{
-        display: flex; align-items: center; gap: {{ section.settings.gap }}px; will-change: transform;
+        display: flex; align-items: center; gap: {{ section.settings.gap }}px; will-change: transform; transition: transform .35s ease;
       }
       #bs-track-{{ section.id }} .bs-item{ flex: 0 0 auto; display:flex; align-items:center; justify-content:center; }
       #bs-track-{{ section.id }} .bs-item a{ display:inline-flex; align-items:center; justify-content:center; text-decoration:none; }
@@ -76,12 +75,8 @@
     <div id="bs-wrap-{{ section.id }}">
       <div id="bs-viewport-{{ section.id }}">
         {% if section.settings.mode == 'carousel' and section.settings.show_arrows %}
-          <button type="button" class="bs-arrow bs-prev" aria-label="Previous">
-            ‹
-          </button>
-          <button type="button" class="bs-arrow bs-next" aria-label="Next">
-            ›
-          </button>
+          <button type="button" class="bs-arrow bs-prev" aria-label="Previous">‹</button>
+          <button type="button" class="bs-arrow bs-next" aria-label="Next">›</button>
         {% endif %}
   
         <div id="bs-track-{{ section.id }}" aria-label="Brand logos"
@@ -144,21 +139,21 @@
     {% if section.settings.mode == 'carousel' %}
     <script>
       (function(){
-        var root = document.getElementById("bs-viewport-{{ section.id }}");
-        if(!root) return;
+        var viewport = document.getElementById("bs-viewport-{{ section.id }}");
+        if(!viewport) return;
         var track = document.getElementById("bs-track-{{ section.id }}");
         var items = track ? Array.from(track.children) : [];
         if(!items.length) return;
   
-        var prev = root.querySelector(".bs-prev");
-        var next = root.querySelector(".bs-next");
+        var prev = viewport.querySelector(".bs-prev");
+        var next = viewport.querySelector(".bs-next");
         var dotsWrap = document.getElementById("bs-dots-{{ section.id }}");
   
         var autoplay = (track.getAttribute("data-autoplay") === "true");
         var interval = parseInt(track.getAttribute("data-interval") || "5000", 10);
   
         function perView(){
-          var w = root.clientWidth;
+          var w = viewport.clientWidth;
           if(w <= 640) return parseInt(track.getAttribute("data-per-mobile"),10);
           if(w <= 990) return parseInt(track.getAttribute("data-per-tablet"),10);
           return parseInt(track.getAttribute("data-per-desktop"),10);
@@ -173,17 +168,14 @@
         function go(i){
           var total = pages();
           page = (i + total) % total;
-          root.scrollLeft = 0; // avoid weirdness in some themes
-          var width = root.clientWidth;
+          var width = viewport.clientWidth;
           track.style.transform = "translateX(" + (-page * width) + "px)";
           updateDots();
         }
   
         function layout(){
-          // Set track width to pageCount * viewport width so translateX paging works
           var total = pages();
           track.style.width = (total * 100) + "%";
-          // Each item already gets width via flex-basis CSS; we just reset transform
           go(page);
           buildDots();
         }
@@ -217,8 +209,8 @@
         function stopAuto(){ if(timer) clearInterval(timer); }
   
         window.addEventListener("resize", layout, { passive:true });
-        root.addEventListener("mouseenter", stopAuto);
-        root.addEventListener("mouseleave", startAuto);
+        viewport.addEventListener("mouseenter", stopAuto);
+        viewport.addEventListener("mouseleave", startAuto);
   
         layout();
         startAuto();
@@ -246,7 +238,7 @@
         { "value": "marquee",  "label": "Marquee (seamless auto-scroll)" }
       ]},
   
-      { "type": "number", "id": "max_items", "label": "Max logos to show (0 = all)", "default": 0, "min": 0 },
+      { "type": "range", "id": "max_items", "min": 0, "max": 100, "step": 1, "label": "Max logos to show (0 = all)", "default": 0 },
   
       { "type": "header", "content": "Carousel options" },
       { "type": "range", "id": "per_desktop", "min": 2, "max": 10, "step": 1, "label": "Logos per view (desktop)", "default": 8 },
@@ -255,7 +247,7 @@
       { "type": "checkbox", "id": "show_arrows", "label": "Show arrows", "default": true },
       { "type": "checkbox", "id": "show_dots", "label": "Show dots", "default": false },
       { "type": "checkbox", "id": "autoplay", "label": "Autoplay", "default": true },
-      { "type": "range", "id": "autoplay_ms", "min": 2000, "max": 12000, "step": 500, "label": "Autoplay interval (ms)", "default": 5000 },
+      { "type": "range", "id": "autoplay_ms", "min": 2000, "max": 9000, "step": 500, "label": "Autoplay interval (ms)", "default": 5000 },
   
       { "type": "header", "content": "Marquee options" },
       { "type": "range", "id": "speed", "min": 12, "max": 60, "step": 1, "label": "Marquee duration (seconds)", "default": 28 }
