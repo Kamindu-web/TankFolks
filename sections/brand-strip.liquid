@@ -1,200 +1,95 @@
-<section class="hero-area" data-section-id="{{ section.id }}">
+{% comment %}
+  File: sections/brand-strip.liquid
+  Ultra-minimal boilerplate: renders a simple brand logo row.
+  Intentionally no JS, no keyframes, no :root vars (max compatibility).
+{% endcomment %}
+
+<section class="brand-strip" data-section-id="{{ section.id }}" style="background: {{ section.settings.bg }}">
     <style>
-      .hero-area {
-        position: relative;
-        overflow: hidden;
-      }
-      .hero-container {
-        max-width: 1200px;
+      /* Keep CSS dead simple for maximum theme compatibility */
+      .brand-strip .bs-wrap {
+        max-width: {{ section.settings.max_width }}px;
         margin: 0 auto;
-        padding: 0 16px;
+        padding: {{ section.settings.v_pad }}px 16px;
         box-sizing: border-box;
       }
-      .hero-slide {
-        position: relative;
-        min-height: 540px;
-        color: #fff;
-        background-size: cover;
-        background-position: center;
-      }
-      .hero-slide::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(90deg, rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.15) 45%, rgba(0, 0, 0, 0));
-        z-index: 0;
-      }
-  
-      .hero-inner {
-        position: relative;
-        z-index: 1;
-        height: 540px;
+      .brand-strip .bs-row {
         display: flex;
+        flex-wrap: wrap;
         align-items: center;
+        gap: {{ section.settings.gap }}px;
       }
-      .hero-content {
-        max-width: 560px;
-      }
-      .hero-content h2 {
-        font-size: 42px;
-        font-weight: 700;
-        margin: 0 0 12px;
-      }
-      .hero-content p {
-        font-size: 16px;
-        line-height: 1.5;
-        margin: 0 0 20px;
-      }
-      .hero-btn {
-        display: inline-block;
-        background: #ff5a1f;
-        color: #fff;
-        padding: 12px 22px;
-        border-radius: 6px;
-        text-decoration: none;
-        font-weight: 700;
-      }
-  
-      .hero-icons {
-        margin-left: auto;
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-      }
-      .hero-icon {
-        width: 78px;
-        height: 78px;
-        border: none;
-        border-radius: 8px;
-        padding: 0px;
-        background: transparent;
-        display: flex;
+      .brand-strip .bs-item {
+        display: inline-flex;
         align-items: center;
         justify-content: center;
       }
-      .hero-icon img {
-        max-width: 100%;
-        max-height: 100%;
+      .brand-strip .bs-item a {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+      }
+      .brand-strip .bs-img {
+        height: {{ section.settings.logo_height }}px;
+        width: auto;
+        max-width: 180px;
         object-fit: contain;
         display: block;
+        {% if section.settings.grayscale %} filter: grayscale(1); opacity: .85; {% endif %}
+        transition: opacity .2s ease, filter .2s ease, transform .2s ease;
       }
-  
-      .hero-nav {
-        position: absolute;
-        left: 50%;
-        transform: translateX(-50%);
-        bottom: 14px;
-        display: flex;
-        gap: 10px;
-        z-index: 2;
-      }
-      .hero-dot {
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        background: #fff;
-        opacity: 0.5;
-        cursor: pointer;
-      }
-      .hero-dot.active {
-        opacity: 1;
-        background: #ff5a1f;
-      }
-  
-      .hero-slide {
-        display: none;
-      }
-      .hero-slide.active {
-        display: block;
+      .brand-strip .bs-item:hover .bs-img {
+        {% if section.settings.grayscale %} filter: none; opacity: 1; {% else %} opacity: 1; {% endif %}
+        transform: translateY(-1px);
       }
     </style>
   
-    <div class="hero-slider" id="hero-slider-{{ section.id }}">
-      {% for block in section.blocks %}
-        <div
-          class="hero-slide{% if forloop.first %} active{% endif %}"
-          style="background-image:url('{{ block.settings.bg | image_url: width: 1920 }}')"
-        >
-          <div class="hero-container">
-            <div class="hero-inner">
-              <div class="hero-content">
-                {% if block.settings.title != blank %}
-                  <h2>{{ block.settings.title }}</h2>
-                {% endif %}
-                {% if block.settings.text != blank %}
-                  <p>{{ block.settings.text }}</p>
-                {% endif %}
-                {% if block.settings.btn_label != blank and block.settings.btn_link != blank %}
-                  <a class="hero-btn" href="{{ block.settings.btn_link }}">{{ block.settings.btn_label }}</a>
-                {% endif %}
-              </div>
-              <div class="hero-icons">
-                {% for i in (1..4) %}
-                  {% assign icon = 'icon' | append: i %}
-                  {% if block.settings[icon] != blank %}
-                    <span class="hero-icon"><img src="{{ block.settings[icon] | image_url }}" alt="icon {{ i }}"></span>
-                  {% endif %}
-                {% endfor %}
-              </div>
-            </div>
-          </div>
-        </div>
-      {% endfor %}
-  
-      <div class="hero-nav">
+    <div class="bs-wrap">
+      <div class="bs-row">
         {% for block in section.blocks %}
-          <div class="hero-dot{% if forloop.first %} active{% endif %}" data-slide="{{ forloop.index0 }}"></div>
+          {% if block.type == 'logo' and block.settings.logo != blank %}
+            <div class="bs-item" {{ block.shopify_attributes }}>
+              {% if block.settings.url != blank %}
+                <a href="{{ block.settings.url }}" aria-label="{{ block.settings.alt | escape }}">
+                  <img class="bs-img" src="{{ block.settings.logo | image_url }}" alt="{{ block.settings.alt | escape }}">
+                </a>
+              {% else %}
+                <img class="bs-img" src="{{ block.settings.logo | image_url }}" alt="{{ block.settings.alt | escape }}">
+              {% endif %}
+            </div>
+          {% endif %}
         {% endfor %}
       </div>
     </div>
-  
-    <script>
-      (function () {
-        var root = document.getElementById('hero-slider-{{ section.id }}');
-        if (!root) return;
-        var slides = root.querySelectorAll('.hero-slide');
-        var dots = root.querySelectorAll('.hero-dot');
-        var current = 0;
-        function showSlide(i) {
-          slides[current].classList.remove('active');
-          dots[current].classList.remove('active');
-          current = i;
-          slides[current].classList.add('active');
-          dots[current].classList.add('active');
-        }
-        dots.forEach((dot, i) => dot.addEventListener('click', () => showSlide(i)));
-        setInterval(() => showSlide((current + 1) % slides.length), 6000);
-      })();
-    </script>
   </section>
   
   {% schema %}
   {
-    "name": "Hero Area new",
-    "settings": [],
+    "name": "Brand Logos (Basic)",
+    "enabled_on": { "templates": ["*"] },
+    "settings": [
+      { "type": "range", "id": "max_width", "min": 960, "max": 1600, "step": 20, "label": "Content max width (px)", "default": 1200 },
+      { "type": "color", "id": "bg", "label": "Background", "default": "#ffffff" },
+      { "type": "range", "id": "v_pad", "min": 0, "max": 40, "step": 2, "label": "Vertical padding (px)", "default": 14 },
+      { "type": "range", "id": "logo_height", "min": 20, "max": 80, "step": 2, "label": "Logo height (px)", "default": 34 },
+      { "type": "range", "id": "gap", "min": 8, "max": 60, "step": 2, "label": "Gap between logos (px)", "default": 36 },
+      { "type": "checkbox", "id": "grayscale", "label": "Grayscale (color on hover)", "default": true }
+    ],
     "blocks": [
       {
-        "type": "slide",
-        "name": "Slide",
+        "type": "logo",
+        "name": "Logo",
         "settings": [
-          { "type": "image_picker", "id": "bg", "label": "Background image" },
-          { "type": "text", "id": "title", "label": "Title", "default": "Welcome to Tank Folk" },
-          {
-            "type": "textarea",
-            "id": "text",
-            "label": "Text",
-            "default": "Discover a World Beneath the Surface – From Exotic Fish to Premium Aquarium Supplies."
-          },
-          { "type": "text", "id": "btn_label", "label": "Button label", "default": "Explore Products" },
-          { "type": "url", "id": "btn_link", "label": "Button link" },
-          { "type": "image_picker", "id": "icon1", "label": "Icon 1" },
-          { "type": "image_picker", "id": "icon2", "label": "Icon 2" },
-          { "type": "image_picker", "id": "icon3", "label": "Icon 3" },
-          { "type": "image_picker", "id": "icon4", "label": "Icon 4" }
+          { "type": "image_picker", "id": "logo", "label": "Logo image (SVG/PNG)" },
+          { "type": "text", "id": "alt", "label": "Alt text", "default": "Brand logo" },
+          { "type": "url", "id": "url", "label": "Optional link" }
         ]
       }
     ],
-    "presets": [{ "name": "Hero Area new", "category": "Hero" }]
+    "presets": [
+      { "name": "Brand Logos (Basic)", "category": "Custom" }
+    ]
   }
   {% endschema %}
   
