@@ -176,16 +176,16 @@
         "logo_height": 34,
         "gap": 36,
         "grayscale": true,
-        "mode": "carousel",
-        "max_items": 6,
-        "per_desktop": 6,
+        "max_items": 8,
+        "per_desktop": 8,
         "per_tablet": 5,
         "per_mobile": 3,
         "show_arrows": true,
         "show_dots": false,
+        "loop": true,
         "autoplay": true,
         "autoplay_ms": 5000,
-        "speed": 28
+        "transition_ms": 350
       }
     },
     "product_list_fa6P9H": {
