@@ -1,11 +1,11 @@
 {% comment %}
   File: sections/brand-strip.liquid
   Brand logos carousel powered by Swiper (looping, responsive, autoplay).
+  Robust loading + cloning to guarantee motion even with few slides.
 {% endcomment %}
 
 <section class="brand-strip" data-section-id="{{ section.id }}" style="background: {{ section.settings.bg }}">
     <style>
-      /* container */
       #bs-wrap-{{ section.id }}{
         max-width: {% if section.settings.full_width %}none{% else %}{{ section.settings.max_width }}px{% endif %};
         margin: 0 auto;
@@ -13,11 +13,9 @@
         box-sizing: border-box;
       }
   
-      /* swiper sizing */
+      /* Swiper sizing */
       #bs-swiper-{{ section.id }} { width: 100%; }
-      #bs-swiper-{{ section.id }} .swiper-slide {
-        display:flex; align-items:center; justify-content:center;
-      }
+      #bs-swiper-{{ section.id }} .swiper-slide { display:flex; align-items:center; justify-content:center; }
       #bs-swiper-{{ section.id }} .bs-link { display:inline-flex; align-items:center; justify-content:center; text-decoration:none; }
   
       /* logo image */
@@ -39,7 +37,6 @@
       }
       #bs-wrap-{{ section.id }} .swiper-button-prev:after,
       #bs-wrap-{{ section.id }} .swiper-button-next:after{ font-size:16px; }
-  
       {% unless section.settings.show_arrows %}
         #bs-wrap-{{ section.id }} .swiper-button-prev,
         #bs-wrap-{{ section.id }} .swiper-button-next{ display:none; }
@@ -49,13 +46,12 @@
       #bs-wrap-{{ section.id }} .swiper-pagination-bullets{ margin-top:10px; position:static; }
       #bs-wrap-{{ section.id }} .swiper-pagination-bullet{ width:8px; height:8px; background:#cfd3d9; opacity:1; }
       #bs-wrap-{{ section.id }} .swiper-pagination-bullet-active{ background:#ff5a1f; }
-  
       {% unless section.settings.show_dots %}
         #bs-wrap-{{ section.id }} .swiper-pagination{ display:none; }
       {% endunless %}
     </style>
   
-    {%- comment -%} Count available logos and cap by max_items {%- endcomment -%}
+    {%- comment -%} Count logos and cap by max_items {%- endcomment -%}
     {% assign bs_count = 0 %}
     {% for block in section.blocks %}
       {% if block.type == 'logo' and block.settings.logo != blank %}
@@ -98,33 +94,58 @@
       </div>
     </div>
   
-    {%- comment -%} Load Swiper once (safe if multiple sections) {%- endcomment -%}
-    <link id="swiper-css" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css" media="print" onload="this.media='all'">
+    {%- comment -%} Swiper assets (load once globally) {%- endcomment -%}
+    <link id="swiper-css" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css">
     <script>
-      (function loadSwiper(){
-        if(window.Swiper) return;
+      (function ensureSwiper(){
+        if(window.Swiper){ window.dispatchEvent(new CustomEvent('bs-swiper-ready')); return; }
         if(document.getElementById('swiper-js')) return;
         var s=document.createElement('script');
-        s.id='swiper-js'; s.src='https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js'; s.defer=true;
+        s.id='swiper-js'; s.src='https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js';
+        s.onload=function(){ window.dispatchEvent(new CustomEvent('bs-swiper-ready')); };
         document.head.appendChild(s);
       })();
     </script>
   
     <script>
-      (function initSwiper(){
-        var tries=0;
-        function start(){
-          if(!window.Swiper){ if(tries++<40) return setTimeout(start,100); else return; }
+      (function(){
+        var id = "{{ section.id }}";
+        var container = document.getElementById("bs-swiper-"+id);
+        if(!container) return;
   
-          var el = document.getElementById('bs-swiper-{{ section.id }}');
-          if(!el) return;
+        function init(){
+          if(!window.Swiper) return;
   
-          var swiper = new Swiper(el, {
-            loop: {{ section.settings.loop | default: true | json }},
+          // --- Guarantee loopability by cloning if needed ---
+          var wrapper = container.querySelector(".swiper-wrapper");
+          var slides  = Array.from(wrapper.children);
+          var total   = slides.length;
+          var perDesktop = {{ section.settings.per_desktop }};
+          var needForLoop = perDesktop + 1; // Swiper needs > slidesPerView for true loop
+  
+          if({{ section.settings.loop | json }} && total > 0 && total < needForLoop){
+            // clone until we have at least slidesPerView+1
+            var idx = 0;
+            while(wrapper.children.length < needForLoop){
+              var clone = slides[idx % total].cloneNode(true);
+              clone.classList.add("bs-clone");
+              wrapper.appendChild(clone);
+              idx++;
+            }
+          }
+  
+          // If still only 1 slide, disable interactions
+          var onlyOne = wrapper.children.length <= 1;
+  
+          var swiper = new Swiper(container, {
+            loop: {{ section.settings.loop | json }} && !onlyOne,
             speed: {{ section.settings.transition_ms | default: 350 }},
             spaceBetween: {{ section.settings.gap }},
             slidesPerView: {{ section.settings.per_desktop }},
-            centeredSlides: false,
+            allowTouchMove: !onlyOne,
+            watchOverflow: true,          // prevents weirdness when not enough slides
+            observeParents: true,
+            observer: true,
   
             autoplay: {% if section.settings.autoplay %}{ delay: {{ section.settings.autoplay_ms }}, disableOnInteraction:false, pauseOnMouseEnter:true }{% else %}false{% endif %},
   
@@ -141,23 +162,12 @@
               0:   { slidesPerView: {{ section.settings.per_mobile }} },
               641: { slidesPerView: {{ section.settings.per_tablet }} },
               991: { slidesPerView: {{ section.settings.per_desktop }} }
-            },
-  
-            // If visible slides >= total, Swiper disables loop.
-            // This keeps loop feeling continuous by enabling freeMode instead.
-            on: {
-              afterInit: function(sw){
-                var total = {{ bs_count }};
-                var pv = sw.params.slidesPerView;
-                if(typeof pv === 'number' && total <= pv){
-                  sw.params.loop = false;
-                  sw.update();
-                }
-              }
             }
           });
         }
-        start();
+  
+        if(window.Swiper) { init(); }
+        else { window.addEventListener('bs-swiper-ready', init, { once:true }); }
       })();
     </script>
   </section>
