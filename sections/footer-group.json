@@ -13,6 +13,21 @@
   "sections": {
     "footer_custom_ribBQK": {
       "type": "footer-custom",
+      "blocks": {
+        "brand_bxtxfC": {
+          "type": "brand",
+          "settings": {
+            "image": "shopify://shop_images/Group_24.png",
+            "title": "Lorem Ipsum Dolor",
+            "desc": "Short one-liner about the brand or category.",
+            "link_label": "Explore",
+            "link_url": ""
+          }
+        }
+      },
+      "block_order": [
+        "brand_bxtxfC"
+      ],
       "name": "Footer (Custom)",
       "settings": {
         "max_width": 1200,
