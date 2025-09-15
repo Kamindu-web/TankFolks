@@ -16,7 +16,21 @@
           "type": "slide",
           "settings": {
             "bg": "shopify://shop_images/Mask_group.jpg",
-            "title": "Welcome to Tank Folk",
+            "title": "Welcome to Tank Folks",
+            "text": "Discover a World Beneath the Surface – From Exotic Fish to Premium Aquarium Supplies.",
+            "btn_label": "Explore Products",
+            "btn_link": "#",
+            "icon1": "shopify://shop_images/Group_6.png",
+            "icon2": "shopify://shop_images/Group_5.png",
+            "icon3": "shopify://shop_images/Group_7.png",
+            "icon4": "shopify://shop_images/Group_8.png"
+          }
+        },
+        "slide_84xCJV": {
+          "type": "slide",
+          "settings": {
+            "bg": "shopify://shop_images/Mask_group_1.jpg",
+            "title": "Welcome to Tank Folks",
             "text": "Discover a World Beneath the Surface – From Exotic Fish to Premium Aquarium Supplies.",
             "btn_label": "Explore Products",
             "btn_link": "#",
@@ -28,10 +42,34 @@
         }
       },
       "block_order": [
-        "slide_UgHHmc"
+        "slide_UgHHmc",
+        "slide_84xCJV"
       ],
       "name": "Hero Area",
       "settings": {}
+    },
+    "floating_search_e7pmJB": {
+      "type": "floating-search",
+      "name": "Floating Product Search",
+      "settings": {
+        "max_width": 1200,
+        "overlap": 40,
+        "title": "Dive In – Search What You Need",
+        "title_size": 18,
+        "placeholder": "Search Products",
+        "button_label": "Search",
+        "show_type": true,
+        "type_label": "Type",
+        "show_vendor": true,
+        "vendor_label": "Vendor",
+        "card_bg": "#ffffff",
+        "title_color": "#111827",
+        "input_bg": "#f7f7f7",
+        "input_border": "#e5e7eb",
+        "btn_bg": "#ff5a1f",
+        "btn_text": "#ffffff",
+        "radius": 14
+      }
     },
     "product_list_fa6P9H": {
       "type": "product-list",
@@ -230,6 +268,7 @@
   },
   "order": [
     "hero_area_jpzYcr",
+    "floating_search_e7pmJB",
     "product_list_fa6P9H"
   ]
 }
