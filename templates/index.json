@@ -74,18 +74,18 @@
     "brand_strip_Mxqybx": {
       "type": "brand-strip",
       "blocks": {
-        "logo_aCRnt7": {
-          "type": "logo",
-          "settings": {
-            "logo": "shopify://shop_images/Chihiros-2_1.png",
-            "alt": "Brand logo",
-            "url": ""
-          }
-        },
         "logo_XWVzEi": {
           "type": "logo",
           "settings": {
             "logo": "shopify://shop_images/aquariologo_1.png",
+            "alt": "Brand logo",
+            "url": ""
+          }
+        },
+        "logo_aCRnt7": {
+          "type": "logo",
+          "settings": {
+            "logo": "shopify://shop_images/Chihiros-2_1.png",
             "alt": "Brand logo",
             "url": ""
           }
@@ -156,8 +156,8 @@
         }
       },
       "block_order": [
-        "logo_aCRnt7",
         "logo_XWVzEi",
+        "logo_aCRnt7",
         "logo_mhUtJ3",
         "logo_H9Ynpx",
         "logo_p3fe9L",
