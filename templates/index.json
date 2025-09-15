@@ -25,10 +25,25 @@
             "icon3": "shopify://shop_images/Group_7.png",
             "icon4": "shopify://shop_images/Group_8.png"
           }
+        },
+        "slide_84xCJV": {
+          "type": "slide",
+          "settings": {
+            "bg": "shopify://shop_images/Mask_group_1.jpg",
+            "title": "Welcome to Tank Folks",
+            "text": "Discover a World Beneath the Surface – From Exotic Fish to Premium Aquarium Supplies.",
+            "btn_label": "Explore Products",
+            "btn_link": "#",
+            "icon1": "shopify://shop_images/Group_6.png",
+            "icon2": "shopify://shop_images/Group_5.png",
+            "icon3": "shopify://shop_images/Group_7.png",
+            "icon4": "shopify://shop_images/Group_8.png"
+          }
         }
       },
       "block_order": [
-        "slide_UgHHmc"
+        "slide_UgHHmc",
+        "slide_84xCJV"
       ],
       "name": "Hero Area",
       "settings": {}
