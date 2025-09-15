@@ -95,6 +95,7 @@
       "settings": {
         "max_width": 1200,
         "base_font": "inherit",
+        "load_pt_sans": true,
         "logo": "shopify://shop_images/NZ_Aquarium-01_1.png",
         "logo_max_width": 260,
         "logo_max_height": 42,
@@ -113,6 +114,7 @@
         "mid_icon_color": "#222222",
         "account_label": "My Account",
         "cart_label": "My Cart",
+        "mid_label_size": 13,
         "show_search": true,
         "search_placeholder": "Search Products",
         "search_bg": "#efefef",
@@ -120,11 +122,11 @@
         "search_text": "#333333",
         "cart_badge_bg": "#ff3b30",
         "cart_badge_color": "#ffffff",
-        "main_menu": "",
-        "badge_text": "Hot deals",
+        "main_menu": "customer-account-main-menu",
         "mainnav_bg_color": "#072f77",
         "mainnav_link_color": "#ffffff",
         "mainnav_link_hover": "#ffe8e8",
+        "menu_font_size": 14,
         "menu_weight": 700
       }
     }
