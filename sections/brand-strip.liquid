@@ -1,8 +1,8 @@
 {% comment %}
   File: sections/brand-strip.liquid
-  Brand logos with two display modes:
-  - "carousel": slider with per-view controls, arrows, dots, autoplay
-  - "marquee": seamless auto-scroll
+  Brand logos with:
+  - Carousel mode (looping, per-view, arrows, dots, autoplay)
+  - Marquee mode (seamless scroll)
 {% endcomment %}
 
 <section class="brand-strip" data-section-id="{{ section.id }}" style="background: {{ section.settings.bg }}">
@@ -19,7 +19,8 @@
       /* shared */
       #bs-viewport-{{ section.id }}{ overflow: hidden; position: relative; }
       #bs-track-{{ section.id }}{
-        display: flex; align-items: center; gap: {{ section.settings.gap }}px; will-change: transform; transition: transform .35s ease;
+        display: flex; align-items: center; gap: {{ section.settings.gap }}px;
+        will-change: transform; transition: transform .35s ease;
       }
       #bs-track-{{ section.id }} .bs-item{ flex: 0 0 auto; display:flex; align-items:center; justify-content:center; }
       #bs-track-{{ section.id }} .bs-item a{ display:inline-flex; align-items:center; justify-content:center; text-decoration:none; }
@@ -72,6 +73,17 @@
       {% endif %}
     </style>
   
+    {%- comment -%} Count originals and cap by max_items for reliable paging & dots {%- endcomment -%}
+    {% assign original_count = 0 %}
+    {% for block in section.blocks %}
+      {% if block.type == 'logo' and block.settings.logo != blank %}
+        {% assign original_count = original_count | plus: 1 %}
+      {% endif %}
+    {% endfor %}
+    {% if section.settings.max_items > 0 and section.settings.max_items < original_count %}
+      {% assign original_count = section.settings.max_items %}
+    {% endif %}
+  
     <div id="bs-wrap-{{ section.id }}">
       <div id="bs-viewport-{{ section.id }}">
         {% if section.settings.mode == 'carousel' and section.settings.show_arrows %}
@@ -79,14 +91,16 @@
           <button type="button" class="bs-arrow bs-next" aria-label="Next">›</button>
         {% endif %}
   
-        <div id="bs-track-{{ section.id }}" aria-label="Brand logos"
+        <div id="bs-track-{{ section.id }}"
+             aria-label="Brand logos"
              data-mode="{{ section.settings.mode }}"
              data-speed="{{ section.settings.speed }}"
              data-autoplay="{{ section.settings.autoplay }}"
              data-interval="{{ section.settings.autoplay_ms }}"
              data-per-desktop="{{ section.settings.per_desktop }}"
              data-per-tablet="{{ section.settings.per_tablet }}"
-             data-per-mobile="{{ section.settings.per_mobile }}">
+             data-per-mobile="{{ section.settings.per_mobile }}"
+             data-original="{{ original_count }}">
           {%- assign max_items = section.settings.max_items | default: 0 -%}
           {%- assign rendered = 0 -%}
   
@@ -151,6 +165,7 @@
   
         var autoplay = (track.getAttribute("data-autoplay") === "true");
         var interval = parseInt(track.getAttribute("data-interval") || "5000", 10);
+        var originalCount = parseInt(track.getAttribute("data-original") || items.length, 10);
   
         function perView(){
           var w = viewport.clientWidth;
@@ -159,30 +174,41 @@
           return parseInt(track.getAttribute("data-per-desktop"),10);
         }
   
-        function pages(){
+        // ensure we have enough content to loop (≥ 2 pages)
+        function ensureLoopCapacity(){
           var pv = perView();
-          return Math.max(1, Math.ceil(items.length / pv));
+          var needed = pv * 2;
+          if(items.length >= needed) return;
+          var clonesNeeded = Math.max(needed - items.length, pv); // at least one extra page
+          var base = items.slice(0, Math.min(items.length, clonesNeeded));
+          base.forEach(function(node){
+            var c = node.cloneNode(true);
+            c.classList.add("bs-clone");
+            track.appendChild(c);
+          });
+          items = Array.from(track.children);
+        }
+  
+        function pageCount(){
+          var pv = perView();
+          var count = Math.max(1, Math.ceil(originalCount / pv));
+          // if only one page from originals, ensure we cloned and treat as 2 pages visually
+          return Math.max(2, count);
         }
   
         var page = 0;
+  
         function go(i){
-          var total = pages();
+          var total = pageCount();
           page = (i + total) % total;
           var width = viewport.clientWidth;
           track.style.transform = "translateX(" + (-page * width) + "px)";
           updateDots();
         }
   
-        function layout(){
-          var total = pages();
-          track.style.width = (total * 100) + "%";
-          go(page);
-          buildDots();
-        }
-  
         function buildDots(){
           if(!dotsWrap) return;
-          var total = pages();
+          var total = pageCount();
           dotsWrap.innerHTML = "";
           for(var i=0;i<total;i++){
             var d = document.createElement("div");
@@ -197,6 +223,12 @@
           ds.forEach(function(el, idx){ el.classList.toggle("active", idx===page); });
         }
   
+        function layout(){
+          ensureLoopCapacity();
+          go(page);
+          buildDots();
+        }
+  
         if(prev) prev.addEventListener("click", function(){ go(page-1); });
         if(next) next.addEventListener("click", function(){ go(page+1); });
   
@@ -208,7 +240,7 @@
         }
         function stopAuto(){ if(timer) clearInterval(timer); }
   
-        window.addEventListener("resize", layout, { passive:true });
+        window.addEventListener("resize", function(){ layout(); }, { passive:true });
         viewport.addEventListener("mouseenter", stopAuto);
         viewport.addEventListener("mouseleave", startAuto);
   
