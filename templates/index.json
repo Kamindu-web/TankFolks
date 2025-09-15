@@ -172,7 +172,7 @@
         "full_width": true,
         "max_width": 1200,
         "bg": "#ffffff",
-        "v_pad": 14,
+        "v_pad": 32,
         "logo_height": 34,
         "gap": 36,
         "grayscale": true,
