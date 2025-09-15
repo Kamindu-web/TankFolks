@@ -1,0 +1,113 @@
+{% comment %}
+  File: sections/logo-carousel.liquid
+  Seamless, auto-scrolling logo carousel (brand strip).
+{% endcomment %}
+
+<section class="logo-carousel" data-section-id="{{ section.id }}">
+    <style>
+      :root{
+        --lc-max: {{ section.settings.max_width | default: 1200 }};
+        --lc-gap: {{ section.settings.gap | default: 36 }}px;
+        --lc-h: {{ section.settings.logo_height | default: 34 }}px;
+        --lc-speed: {{ section.settings.speed | default: 28 }}s; /* lower = faster */
+        --lc-pad: {{ section.settings.v_pad | default: 14 }}px;
+        --lc-bg: {{ section.settings.bg | default: '#ffffff' }};
+        --lc-gray: {{ section.settings.grayscale | default: false }};
+      }
+  
+      .logo-carousel{background:var(--lc-bg);position:relative;overflow:hidden}
+      .lc-wrap{max-width:calc(var(--lc-max)*1px);margin:0 auto;padding:var(--lc-pad) 16px;box-sizing:border-box}
+  
+      .lc-viewport{overflow:hidden}
+      .lc-track{
+        display:flex;
+        align-items:center;
+        gap:var(--lc-gap);
+        animation: lc-scroll var(--lc-speed) linear infinite;
+        will-change: transform;
+      }
+      .logo-carousel:hover .lc-track{animation-play-state: paused;}
+  
+      /* each logo */
+      .lc-item{flex:0 0 auto;display:flex;align-items:center;justify-content:center;opacity:.9}
+      .lc-item a{display:inline-flex;align-items:center;justify-content:center}
+      .lc-img{
+        height:var(--lc-h);
+        width:auto;
+        max-width:160px;
+        object-fit:contain;
+        display:block;
+        {% if section.settings.grayscale %} filter: grayscale(100%); opacity:.8; {% endif %}
+        transition:opacity .2s ease, filter .2s ease, transform .2s ease;
+      }
+      .lc-item:hover .lc-img{
+        {% if section.settings.grayscale %} filter:none; opacity:1; {% else %} opacity:1; {% endif %}
+        transform: translateY(-1px);
+      }
+  
+      @keyframes lc-scroll{
+        0%{ transform: translateX(0); }
+        100%{ transform: translateX(-50%); }
+      }
+  
+      /* Avoid jump on very small screens */
+      @media (max-width:480px){
+        .lc-img{max-width:120px}
+      }
+    </style>
+  
+    <div class="lc-wrap">
+      <div class="lc-viewport">
+        {%- comment -%}
+          We render two identical tracks (A+B) so when A scrolls out,
+          B follows seamlessly, then loops.
+        {%- endcomment -%}
+        <div class="lc-track" aria-label="Brand logos">
+          {% for _pass in (1..2) %}
+            {% for block in section.blocks %}
+              {% assign img = block.settings.logo %}
+              {% if img != blank %}
+                <div class="lc-item" {{ block.shopify_attributes }}>
+                  {% if block.settings.url != blank %}
+                    <a href="{{ block.settings.url }}" aria-label="{{ block.settings.alt | escape | default: 'Brand logo' }}">
+                      <img class="lc-img" src="{{ img | image_url }}" alt="{{ block.settings.alt | escape | default: img.alt | escape }}">
+                    </a>
+                  {% else %}
+                    <img class="lc-img" src="{{ img | image_url }}" alt="{{ block.settings.alt | escape | default: img.alt | escape }}">
+                  {% endif %}
+                </div>
+              {% endif %}
+            {% endfor %}
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  {% schema %}
+  {
+    "name": "Logo Carousel",
+    "settings": [
+      { "type": "range", "id": "max_width", "min": 960, "max": 1600, "step": 20, "unit": "px", "label": "Content max width (match header)", "default": 1200 },
+      { "type": "color", "id": "bg", "label": "Background", "default": "#ffffff" },
+      { "type": "range", "id": "v_pad", "min": 0, "max": 40, "step": 2, "unit": "px", "label": "Vertical padding", "default": 14 },
+      { "type": "range", "id": "logo_height", "min": 20, "max": 70, "step": 2, "unit": "px", "label": "Logo height", "default": 34 },
+      { "type": "range", "id": "gap", "min": 12, "max": 60, "step": 2, "unit": "px", "label": "Gap between logos", "default": 36 },
+      { "type": "range", "id": "speed", "min": 12, "max": 60, "step": 2, "unit": "s", "label": "Scroll duration (slower ⟶ bigger)", "default": 28 },
+      { "type": "checkbox", "id": "grayscale", "label": "Show logos in grayscale (color on hover)", "default": true }
+    ],
+    "blocks": [
+      {
+        "type": "logo",
+        "name": "Logo",
+        "settings": [
+          { "type": "image_picker", "id": "logo", "label": "Logo image (SVG/PNG)" },
+          { "type": "text", "id": "alt", "label": "Alt text", "default": "" },
+          { "type": "url", "id": "url", "label": "Optional link" }
+        ]
+      }
+    ],
+    "presets": [{ "name": "Logo Carousel", "category": "Logos" }]
+  }
+  {% endschema %}
+  
