@@ -5,56 +5,77 @@
 {% endcomment %}
 
 <section class="product-grid-basic" data-section-id="{{ section.id }}">
-    <style>
-      #pgb-wrap-{{ section.id }}{max-width:{{ section.settings.max_width }}px;margin:0 auto;padding:40px 16px;box-sizing:border-box}
-      #pgb-wrap-{{ section.id }} h2{font:700 28px/1.2 "PT Sans",system-ui,Arial;margin:0 0 28px}
-      .pgb-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:24px}
-      .pgb-card{background:#fff;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,.08);overflow:hidden;display:flex;flex-direction:column;transition:transform .18s ease,box-shadow .18s ease}
-      .pgb-card:hover{transform:translateY(-4px);box-shadow:0 10px 22px rgba(0,0,0,.12)}
-      .pgb-img{width:100%;padding-top:72%;position:relative;background:#fafafa}
-      .pgb-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
-      .pgb-body{padding:14px 16px 18px;display:flex;flex-direction:column;gap:10px}
-      .pgb-title{font:600 16px/1.35 "PT Sans",system-ui,Arial;color:#111;text-decoration:none}
-      .pgb-price{font:700 15px/1 "PT Sans",system-ui,Arial}
-    </style>
-  
-    {% assign handle = section.settings.collection_handle | strip | default: 'frontpage' %}
-    {% assign coll = collections[handle] %}
-  
-    <div id="pgb-wrap-{{ section.id }}">
-      {% if section.settings.heading != blank %}<h2>{{ section.settings.heading }}</h2>{% endif %}
-  
-      <div class="pgb-grid">
-        {% if coll and coll.products_count > 0 %}
-          {% for product in coll.products limit: section.settings.limit %}
-            <div class="pgb-card">
-              <a class="pgb-img" href="{{ product.url }}">
-                <img src="{{ product.featured_image | image_url: width: 600 }}" alt="{{ product.title | escape }}">
-              </a>
-              <div class="pgb-body">
-                <a class="pgb-title" href="{{ product.url }}">{{ product.title }}</a>
-                <div class="pgb-price">{{ product.price | money }}</div>
-              </div>
+  <style>
+    #pgb-wrap-{{ section.id }}{max-width:{{ section.settings.max_width }}px;margin:0 auto;padding:40px 16px;box-sizing:border-box}
+    #pgb-wrap-{{ section.id }} h2{font:700 28px/1.2 "PT Sans",system-ui,Arial;margin:0 0 28px}
+    .pgb-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:24px}
+    .pgb-card{background:#fff;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,.08);overflow:hidden;display:flex;flex-direction:column;transition:transform .18s ease,box-shadow .18s ease}
+    .pgb-card:hover{transform:translateY(-4px);box-shadow:0 10px 22px rgba(0,0,0,.12)}
+    .pgb-img{
+        width:100%;position:relative;background:#fafafa; padding : 20px;
+    }
+    .pgb-img img{
+        inset:0;width:100%;height:100%;object-fit:contain
+    }
+    .pgb-body{padding:14px 16px 18px;display:flex;flex-direction:column;gap:10px}
+    .pgb-title{font:600 16px/1.35 "PT Sans",system-ui,Arial;color:#111;text-decoration:none}
+    .pgb-price{font:700 15px/1 "PT Sans",system-ui,Arial}
+  </style>
+
+  {% assign handle = section.settings.collection_handle | strip | default: 'frontpage' %}
+  {% assign coll = collections[handle] %}
+
+  <div id="pgb-wrap-{{ section.id }}">
+    {% if section.settings.heading != blank %}
+      <h2>{{ section.settings.heading }}</h2>
+    {% endif %}
+
+    <div class="pgb-grid">
+      {% if coll and coll.products_count > 0 %}
+        {% for product in coll.products limit: section.settings.limit %}
+          <div class="pgb-card">
+            <a class="pgb-img" href="{{ product.url }}">
+              <img src="{{ product.featured_image | image_url: width: 600 }}" alt="{{ product.title | escape }}">
+            </a>
+            <div class="pgb-body">
+              <a class="pgb-title" href="{{ product.url }}">{{ product.title }}</a>
+              <div class="pgb-price">{{ product.price | money }}</div>
             </div>
-          {% endfor %}
-        {% else %}
-          <p>No products found in collection handle: <code>{{ handle }}</code></p>
-        {% endif %}
-      </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <p>
+          No products found in collection handle: <code>{{ handle }}</code>
+        </p>
+      {% endif %}
     </div>
-  </section>
-  
-  {% schema %}
-  {
-    "name": "Product Grid (Basic)",
-    "enabled_on": { "templates": ["*"] },
-    "settings": [
-      { "type": "text", "id": "heading", "label": "Section heading", "default": "Featured Products" },
-      { "type": "range", "id": "max_width", "min": 800, "max": 1600, "step": 20, "label": "Content max width (px)", "default": 1200 },
-      { "type": "text", "id": "collection_handle", "label": "Collection handle", "default": "frontpage", "info": "Enter a collection handle, e.g. frontpage, all, or your custom handle." },
-      { "type": "range", "id": "limit", "min": 2, "max": 24, "step": 1, "label": "Products to show", "default": 8 }
-    ],
-    "presets": [{ "name": "Product Grid (Basic)", "category": "Products" }]
-  }
-  {% endschema %}
-  
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Product Grid (Basic)",
+  "enabled_on": { "templates": ["*"] },
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Section heading", "default": "Featured Products" },
+    {
+      "type": "range",
+      "id": "max_width",
+      "min": 800,
+      "max": 1600,
+      "step": 20,
+      "label": "Content max width (px)",
+      "default": 1200
+    },
+    {
+      "type": "text",
+      "id": "collection_handle",
+      "label": "Collection handle",
+      "default": "frontpage",
+      "info": "Enter a collection handle, e.g. frontpage, all, or your custom handle."
+    },
+    { "type": "range", "id": "limit", "min": 2, "max": 24, "step": 1, "label": "Products to show", "default": 8 }
+  ],
+  "presets": [{ "name": "Product Grid (Basic)", "category": "Products" }]
+}
+{% endschema %}
