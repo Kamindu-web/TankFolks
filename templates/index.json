@@ -226,10 +226,34 @@
         "padding-block-start": 48,
         "padding-block-end": 48
       }
+    },
+    "floating_search_e7pmJB": {
+      "type": "floating-search",
+      "name": "Floating Product Search",
+      "settings": {
+        "max_width": 1200,
+        "overlap": 40,
+        "title": "Dive In – Search What You Need",
+        "title_size": 18,
+        "placeholder": "Search Products",
+        "button_label": "Search",
+        "show_type": true,
+        "type_label": "Type",
+        "show_vendor": true,
+        "vendor_label": "Vendor",
+        "card_bg": "#ffffff",
+        "title_color": "#111827",
+        "input_bg": "#f7f7f7",
+        "input_border": "#e5e7eb",
+        "btn_bg": "#ff5a1f",
+        "btn_text": "#ffffff",
+        "radius": 14
+      }
     }
   },
   "order": [
     "hero_area_jpzYcr",
+    "floating_search_e7pmJB",
     "product_list_fa6P9H"
   ]
 }
