@@ -1,0 +1,170 @@
+{% comment %}
+  Floating Product Search (place this section AFTER the Hero Area in the editor)
+  - Overlaps the previous section visually using negative margin
+  - Searches products using Shopify's search (type=product)
+  - Optional filters: product_type and vendor (built from shop data)
+{% endcomment %}
+
+<section class="floating-search" data-section-id="{{ section.id }}">
+    <style>
+      :root{
+        --fs-max: {{ section.settings.max_width | default: 1200 }};
+        --fs-overlap: {{ section.settings.overlap | default: 40 }}px;
+        --fs-bg: {{ section.settings.card_bg | default: '#ffffff' }};
+        --fs-title: {{ section.settings.title_color | default: '#1f2937' }};
+        --fs-input-bg: {{ section.settings.input_bg | default: '#f7f7f7' }};
+        --fs-input-border: {{ section.settings.input_border | default: '#e5e7eb' }};
+        --fs-btn-bg: {{ section.settings.btn_bg | default: '#ff5a1f' }};
+        --fs-btn-text: {{ section.settings.btn_text | default: '#ffffff' }};
+        --fs-radius: {{ section.settings.radius | default: 14 }}px;
+        --fs-shadow: 0 10px 24px rgba(0,0,0,.12);
+        --fs-title-size: {{ section.settings.title_size | default: 18 }}px;
+      }
+  
+      .floating-search{position:relative;z-index:5}
+      .fs-wrap{
+        max-width:calc(var(--fs-max)*1px);
+        margin:calc(var(--fs-overlap)*-1) auto 0;
+        padding:0 16px;
+        box-sizing:border-box;
+      }
+      .fs-card{
+        background:var(--fs-bg);
+        border-radius:var(--fs-radius);
+        box-shadow:var(--fs-shadow);
+        padding:18px 18px 20px;
+      }
+      .fs-title{
+        margin:0 0 10px;
+        font-weight:700;
+        font-size:var(--fs-title-size);
+        color:var(--fs-title);
+      }
+      .fs-row{
+        display:flex; gap:14px; align-items:center; flex-wrap:wrap;
+      }
+      .fs-input, .fs-select{
+        background:var(--fs-input-bg);
+        border:1px solid var(--fs-input-border);
+        border-radius:8px;
+        padding:10px 12px;
+        font-size:14px;
+        color:#111;
+        outline:none;
+        flex:1 1 280px;
+        min-width:220px;
+      }
+      .fs-select{ flex:0 0 200px; min-width:160px; }
+      .fs-btn{
+        appearance:none;border:0;cursor:pointer;
+        background:var(--fs-btn-bg); color:var(--fs-btn-text);
+        border-radius:999px; padding:10px 18px; font-weight:700; font-size:14px;
+        white-space:nowrap;
+      }
+  
+      @media (max-width: 640px){
+        .fs-row{gap:10px}
+        .fs-select{flex:1 1 160px}
+      }
+    </style>
+  
+    <div class="fs-wrap">
+      <div class="fs-card">
+        {% if section.settings.title != blank %}
+          <h3 class="fs-title">{{ section.settings.title }}</h3>
+        {% endif %}
+  
+        <form id="fs-form-{{ section.id }}" class="fs-row" action="{{ routes.search_url }}" method="get" role="search" aria-label="Product search">
+          <!-- required to restrict to products -->
+          <input type="hidden" name="type" value="product">
+  
+          <!-- main query -->
+          <input class="fs-input" type="search" name="q" id="fs-q-{{ section.id }}" placeholder="{{ section.settings.placeholder | escape }}" />
+  
+          <!-- optional product type -->
+          {% if section.settings.show_type %}
+            <select class="fs-select" id="fs-type-{{ section.id }}" aria-label="Product type">
+              <option value="">{{ section.settings.type_label }}</option>
+              {% for t in shop.types %}
+                {% if t != blank %}
+                  <option value="{{ t | escape }}">{{ t }}</option>
+                {% endif %}
+              {% endfor %}
+            </select>
+          {% endif %}
+  
+          <!-- optional vendor -->
+          {% if section.settings.show_vendor %}
+            <select class="fs-select" id="fs-vendor-{{ section.id }}" aria-label="Vendor">
+              <option value="">{{ section.settings.vendor_label }}</option>
+              {% for v in shop.vendors %}
+                {% if v != blank %}
+                  <option value="{{ v | escape }}">{{ v }}</option>
+                {% endif %}
+              {% endfor %}
+            </select>
+          {% endif %}
+  
+          <button class="fs-btn" type="submit">{{ section.settings.button_label }}</button>
+        </form>
+      </div>
+    </div>
+  
+    <script>
+      (function(){
+        var form = document.getElementById("fs-form-{{ section.id }}");
+        if(!form) return;
+        form.addEventListener("submit", function(e){
+          // Build Shopify search query with product_type/vendor filters
+          var qInput = form.querySelector('input[name="q"]');
+          var q = (qInput && qInput.value) ? qInput.value.trim() : "";
+  
+          {% if section.settings.show_type %}
+            var typeSel = document.getElementById("fs-type-{{ section.id }}");
+            if(typeSel && typeSel.value) { q += (q ? " " : "") + 'product_type:"' + typeSel.value.replace(/"/g,'\\"') + '"'; }
+          {% endif %}
+  
+          {% if section.settings.show_vendor %}
+            var venSel = document.getElementById("fs-vendor-{{ section.id }}");
+            if(venSel && venSel.value) { q += (q ? " " : "") + 'vendor:"' + venSel.value.replace(/"/g,'\\"') + '"'; }
+          {% endif %}
+  
+          // write back the composed query
+          if(qInput) qInput.value = q;
+        });
+      })();
+    </script>
+  </section>
+  
+  {% schema %}
+  {
+    "name": "Floating Product Search",
+    "settings": [
+      { "type": "range", "id": "max_width", "min": 960, "max": 1440, "step": 20, "unit": "px", "label": "Content max width (match header)", "default": 1200 },
+      { "type": "range", "id": "overlap", "min": 0, "max": 120, "step": 2, "unit": "px", "label": "Overlap above hero (pull up)", "default": 40 },
+  
+      { "type": "text", "id": "title", "label": "Title", "default": "Dive In – Search What You Need" },
+      { "type": "range", "id": "title_size", "min": 14, "max": 28, "step": 1, "unit": "px", "label": "Title size", "default": 18 },
+  
+      { "type": "text", "id": "placeholder", "label": "Main input placeholder", "default": "Search Products" },
+      { "type": "text", "id": "button_label", "label": "Button label", "default": "Search" },
+  
+      { "type": "checkbox", "id": "show_type", "label": "Show Product Type dropdown", "default": true },
+      { "type": "text", "id": "type_label", "label": "Product Type placeholder", "default": "Type" },
+  
+      { "type": "checkbox", "id": "show_vendor", "label": "Show Vendor dropdown", "default": true },
+      { "type": "text", "id": "vendor_label", "label": "Vendor placeholder", "default": "Vendor" },
+  
+      { "type": "color", "id": "card_bg", "label": "Card background", "default": "#ffffff" },
+      { "type": "color", "id": "title_color", "label": "Title color", "default": "#111827" },
+      { "type": "color", "id": "input_bg", "label": "Input background", "default": "#f7f7f7" },
+      { "type": "color", "id": "input_border", "label": "Input border", "default": "#e5e7eb" },
+      { "type": "color", "id": "btn_bg", "label": "Button background", "default": "#ff5a1f" },
+      { "type": "color", "id": "btn_text", "label": "Button text color", "default": "#ffffff" },
+      { "type": "range", "id": "radius", "min": 6, "max": 24, "step": 1, "unit": "px", "label": "Card corner radius", "default": 14 }
+    ],
+    "blocks": [],
+    "presets": [{ "name": "Floating Product Search", "category": "Search" }]
+  }
+  {% endschema %}
+  
