@@ -210,6 +210,18 @@
         "collection_handle": "frontpage",
         "limit": 8
       }
+    },
+    "blog_grid_QJdFyX": {
+      "type": "blog-grid",
+      "name": "Blog Grid",
+      "settings": {
+        "heading": "What's happening now",
+        "full_width": false,
+        "max_width": 1200,
+        "blog": "learning-centre",
+        "limit": 4,
+        "show_excerpt": true
+      }
     }
   },
   "order": [
@@ -217,6 +229,7 @@
     "floating_search_e7pmJB",
     "brand_strip_Mxqybx",
     "custom_product_grid_HGQnVm",
-    "custom_product_grid_wVrBBU"
+    "custom_product_grid_wVrBBU",
+    "blog_grid_QJdFyX"
   ]
 }
