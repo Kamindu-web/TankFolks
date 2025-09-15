@@ -178,7 +178,7 @@
         "grayscale": true,
         "mode": "carousel",
         "max_items": 8,
-        "per_desktop": 6,
+        "per_desktop": 7,
         "per_tablet": 5,
         "per_mobile": 3,
         "show_arrows": true,
