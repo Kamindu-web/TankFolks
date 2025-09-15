@@ -169,12 +169,23 @@
       ],
       "name": "Brand Logos (Basic)",
       "settings": {
+        "full_width": true,
         "max_width": 1200,
         "bg": "#ffffff",
         "v_pad": 14,
         "logo_height": 34,
         "gap": 36,
-        "grayscale": true
+        "grayscale": true,
+        "mode": "carousel",
+        "max_items": 8,
+        "per_desktop": 8,
+        "per_tablet": 5,
+        "per_mobile": 3,
+        "show_arrows": true,
+        "show_dots": false,
+        "autoplay": true,
+        "autoplay_ms": 5000,
+        "speed": 28
       }
     },
     "product_list_fa6P9H": {
