@@ -1,0 +1,118 @@
+{% comment %}
+  Custom Product Grid
+  - Source: collection OR manual products
+  - Adjustable product count
+  - Clean cards
+{% endcomment %}
+
+<section class="custom-product-grid" data-section-id="{{ section.id }}">
+    <style>
+      #cpg-wrap-{{ section.id }}{
+        max-width: {{ section.settings.max_width }}px;
+        margin: 0 auto;
+        padding: 40px 16px;
+        box-sizing: border-box;
+      }
+      #cpg-wrap-{{ section.id }} h2{
+        font-size: 28px;
+        font-weight: 700;
+        margin: 0 0 28px;
+      }
+  
+      .cpg-grid{
+        display:grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px,1fr));
+        gap: 24px;
+      }
+      .cpg-card{
+        background:#fff;
+        border-radius:12px;
+        box-shadow:0 2px 10px rgba(0,0,0,.08);
+        overflow:hidden;
+        display:flex;
+        flex-direction:column;
+        transition:transform .18s ease, box-shadow .18s ease;
+      }
+      .cpg-card:hover{
+        transform:translateY(-4px);
+        box-shadow:0 10px 22px rgba(0,0,0,.12);
+      }
+      .cpg-img{
+        width:100%;
+        padding-top:72%;
+        position:relative;
+        background:#fafafa;
+      }
+      .cpg-img img{
+        position:absolute; inset:0;
+        width:100%; height:100%;
+        object-fit:contain;
+      }
+      .cpg-body{ padding:14px 16px 18px; display:flex; flex-direction:column; gap:10px; }
+      .cpg-title{ font-size:16px; font-weight:600; color:#111; text-decoration:none; }
+      .cpg-price{ font-size:15px; font-weight:700; }
+    </style>
+  
+    <div id="cpg-wrap-{{ section.id }}">
+      {% if section.settings.heading != blank %}
+        <h2>{{ section.settings.heading }}</h2>
+      {% endif %}
+  
+      <div class="cpg-grid">
+        {%- if section.settings.source == 'collection' and section.settings.collection != blank -%}
+          {%- assign coll = collections[section.settings.collection] -%}
+          {%- for product in coll.products limit: section.settings.limit -%}
+            <div class="cpg-card">
+              <a class="cpg-img" href="{{ product.url }}">
+                <img src="{{ product.featured_image | image_url: width: 600 }}" alt="{{ product.title | escape }}">
+              </a>
+              <div class="cpg-body">
+                <a class="cpg-title" href="{{ product.url }}">{{ product.title }}</a>
+                <div class="cpg-price">{{ product.price | money }}</div>
+              </div>
+            </div>
+          {%- endfor -%}
+        {%- else -%}
+          {%- for block in section.blocks limit: section.settings.limit -%}
+            {%- assign p = all_products[block.settings.product] -%}
+            {% if p %}
+              <div class="cpg-card">
+                <a class="cpg-img" href="{{ p.url }}">
+                  <img src="{{ p.featured_image | image_url: width: 600 }}" alt="{{ p.title | escape }}">
+                </a>
+                <div class="cpg-body">
+                  <a class="cpg-title" href="{{ p.url }}">{{ p.title }}</a>
+                  <div class="cpg-price">{{ p.price | money }}</div>
+                </div>
+              </div>
+            {% endif %}
+          {%- endfor -%}
+        {%- endif -%}
+      </div>
+    </div>
+  </section>
+  
+  {% schema %}
+  {
+    "name": "Product Grid (Custom)",
+    "enabled_on": { "templates": ["*"] },
+    "settings": [
+      { "type": "text", "id": "heading", "label": "Section heading", "default": "Featured Products" },
+      { "type": "range", "id": "max_width", "min": 800, "max": 1600, "step": 20, "label": "Content max width (px)", "default": 1200 },
+  
+      { "type": "select", "id": "source", "label": "Product source", "default": "collection",
+        "options": [
+          { "value": "collection", "label": "Collection" },
+          { "value": "manual", "label": "Manual selection" }
+        ]
+      },
+      { "type": "collection", "id": "collection", "label": "Choose collection" },
+      { "type": "range", "id": "limit", "min": 2, "max": 24, "step": 1, "label": "Products to show", "default": 8 }
+    ],
+    "blocks": [
+      { "type": "product", "name": "Product", "settings": [ { "type": "product", "id": "product", "label": "Select product" } ] }
+    ],
+    "presets": [ { "name": "Product Grid (Custom)", "category": "Products" } ]
+  }
+  {% endschema %}
+  
