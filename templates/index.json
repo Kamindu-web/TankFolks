@@ -74,18 +74,18 @@
     "brand_strip_Mxqybx": {
       "type": "brand-strip",
       "blocks": {
-        "logo_aCRnt7": {
-          "type": "logo",
-          "settings": {
-            "logo": "shopify://shop_images/Chihiros-2_1.png",
-            "alt": "Brand logo",
-            "url": ""
-          }
-        },
         "logo_XWVzEi": {
           "type": "logo",
           "settings": {
             "logo": "shopify://shop_images/aquariologo_1.png",
+            "alt": "Brand logo",
+            "url": ""
+          }
+        },
+        "logo_aCRnt7": {
+          "type": "logo",
+          "settings": {
+            "logo": "shopify://shop_images/Chihiros-2_1.png",
             "alt": "Brand logo",
             "url": ""
           }
@@ -156,8 +156,8 @@
         }
       },
       "block_order": [
-        "logo_aCRnt7",
         "logo_XWVzEi",
+        "logo_aCRnt7",
         "logo_mhUtJ3",
         "logo_H9Ynpx",
         "logo_p3fe9L",
@@ -172,20 +172,20 @@
         "full_width": true,
         "max_width": 1200,
         "bg": "#ffffff",
-        "v_pad": 14,
+        "v_pad": 32,
         "logo_height": 34,
         "gap": 36,
         "grayscale": true,
-        "mode": "carousel",
-        "max_items": 6,
-        "per_desktop": 6,
+        "max_items": 8,
+        "per_desktop": 8,
         "per_tablet": 5,
         "per_mobile": 3,
         "show_arrows": true,
         "show_dots": false,
+        "loop": true,
         "autoplay": true,
         "autoplay_ms": 5000,
-        "speed": 28
+        "transition_ms": 350
       }
     },
     "product_list_fa6P9H": {
