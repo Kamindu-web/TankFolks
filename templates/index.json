@@ -202,7 +202,7 @@
       "type": "custom-product-grid",
       "name": "Product Grid (Basic)",
       "settings": {
-        "heading": "Featured Products",
+        "heading": "New Arrivals",
         "max_width": 1200,
         "collection_handle": "frontpage",
         "limit": 8
