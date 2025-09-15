@@ -1,0 +1,108 @@
+{% comment %}
+  File: sections/brand-strip.liquid
+  Simple, seamless auto-scrolling brand logo carousel (marquee).
+  - Upload logos as blocks (SVG/PNG), optional link + alt.
+  - Adjustable width, height, gap, speed, grayscale.
+{% endcomment %}
+
+<section class="brand-strip" data-section-id="{{ section.id }}" style="background: {{ section.settings.bg }}">
+    <style>
+      /* Layout */
+      #bs-wrap-{{ section.id }}{
+        max-width: {{ section.settings.max_width }}px;
+        margin: 0 auto;
+        padding: {{ section.settings.v_pad }}px 16px;
+        box-sizing: border-box;
+        overflow: hidden;
+      }
+      #bs-track-{{ section.id }}{
+        display: flex;
+        align-items: center;
+        gap: {{ section.settings.gap }}px;
+        will-change: transform;
+        animation: bs-scroll-{{ section.id }} {{ section.settings.speed }}s linear infinite;
+      }
+      .brand-strip:hover #bs-track-{{ section.id }}{ animation-play-state: paused; }
+  
+      /* Items */
+      #bs-track-{{ section.id }} .bs-item{ flex: 0 0 auto; display: flex; align-items: center; justify-content: center; opacity: .9; }
+      #bs-track-{{ section.id }} .bs-item a{ display: inline-flex; align-items: center; justify-content: center; }
+      #bs-track-{{ section.id }} .bs-img{
+        height: {{ section.settings.logo_height }}px;
+        width: auto;
+        max-width: 180px;
+        object-fit: contain;
+        display: block;
+        {% if section.settings.grayscale %} filter: grayscale(1); opacity: .85; {% endif %}
+        transition: opacity .2s ease, filter .2s ease, transform .2s ease;
+      }
+      #bs-track-{{ section.id }} .bs-item:hover .bs-img{
+        {% if section.settings.grayscale %} filter: none; opacity: 1; {% else %} opacity: 1; {% endif %}
+        transform: translateY(-1px);
+      }
+  
+      /* Keyframes (unique per-section to avoid collisions) */
+      @keyframes bs-scroll-{{ section.id }}{
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-50%); }
+      }
+  
+      @media (max-width: 480px){
+        #bs-track-{{ section.id }} .bs-img{ max-width: 120px; }
+      }
+    </style>
+  
+    <div id="bs-wrap-{{ section.id }}">
+      <div id="bs-viewport-{{ section.id }}">
+        {%- comment -%} Duplicate the sequence so it loops seamlessly {%- endcomment -%}
+        <div id="bs-track-{{ section.id }}" aria-label="Brand logos">
+          {% for pass in (1..2) %}
+            {% for block in section.blocks %}
+              {% if block.type == 'logo' and block.settings.logo != blank %}
+                <div class="bs-item" {{ block.shopify_attributes }}>
+                  {% if block.settings.url != blank %}
+                    <a href="{{ block.settings.url }}" aria-label="{{ block.settings.alt | escape }}">
+                      <img class="bs-img" src="{{ block.settings.logo | image_url }}" alt="{{ block.settings.alt | escape }}">
+                    </a>
+                  {% else %}
+                    <img class="bs-img" src="{{ block.settings.logo | image_url }}" alt="{{ block.settings.alt | escape }}">
+                  {% endif %}
+                </div>
+              {% endif %}
+            {% endfor %}
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  {% schema %}
+  {
+    "name": "Brand Logos (Carousel)",
+    "enabled_on": { "templates": ["*"] },
+    "settings": [
+      { "type": "range", "id": "max_width", "min": 960, "max": 1600, "step": 20, "label": "Content max width (px)", "default": 1200 },
+      { "type": "color", "id": "bg", "label": "Background", "default": "#ffffff" },
+      { "type": "range", "id": "v_pad", "min": 0, "max": 40, "step": 2, "label": "Vertical padding (px)", "default": 14 },
+      { "type": "range", "id": "logo_height", "min": 20, "max": 80, "step": 2, "label": "Logo height (px)", "default": 34 },
+      { "type": "range", "id": "gap", "min": 12, "max": 60, "step": 2, "label": "Gap between logos (px)", "default": 36 },
+      { "type": "range", "id": "speed", "min": 12, "max": 60, "step": 1, "label": "Scroll duration (seconds)", "default": 28 },
+      { "type": "checkbox", "id": "grayscale", "label": "Grayscale (color on hover)", "default": true }
+    ],
+    "blocks": [
+      {
+        "type": "logo",
+        "name": "Logo",
+        "settings": [
+          { "type": "image_picker", "id": "logo", "label": "Logo image (SVG/PNG)" },
+          { "type": "text", "id": "alt", "label": "Alt text", "default": "Brand logo" },
+          { "type": "url", "id": "url", "label": "Optional link" }
+        ]
+      }
+    ],
+    "presets": [
+      { "name": "Brand Logos (Carousel)", "category": "Custom" }
+    ]
+  }
+  {% endschema %}
+  
