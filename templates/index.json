@@ -213,6 +213,9 @@
     },
     "blog_grid_QJdFyX": {
       "type": "blog-grid",
+      "custom_css": [
+        ".blog-grid {background: #e0e0e0;}"
+      ],
       "name": "Blog Grid",
       "settings": {
         "heading": "What's happening now",
