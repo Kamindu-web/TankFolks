@@ -1,11 +1,12 @@
 {% comment %}
-  Footer – Custom, 4-column (Brands, About, Quick Links, Policies)
-  Everything is configurable from the Theme Editor.
+  Z Footer (Custom) — 4 columns: Brands, About, Quick Links, Policies
+  - No enabled_on / groups (to avoid picker rejection)
+  - Unique type/name so it won't collide with theme's stock footer
 {% endcomment %}
 
-<section class="ft-custom" data-section-id="{{ section.id }}">
+<section class="z-footer" data-section-id="{{ section.id }}">
     <style>
-      .ftc-wrap-{{ section.id }}{
+      .zf-wrap-{{ section.id }}{
         --bg: {{ section.settings.bg }};
         --text: {{ section.settings.text }};
         --muted: {{ section.settings.muted }};
@@ -15,81 +16,62 @@
         --divider: {{ section.settings.divider }};
         --max: {{ section.settings.max_width }}px;
         --gap: {{ section.settings.col_gap }}px;
-        --radius: 10px;
-  
         font-family: "PT Sans", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
         background: var(--bg);
         color: var(--text);
       }
+      .zf-container{max-width:var(--max);margin:0 auto;padding:40px 16px 20px;box-sizing:border-box}
+      .zf-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--gap)}
+      @media (max-width:1024px){ .zf-grid{grid-template-columns:repeat(2,1fr)} }
+      @media (max-width:640px){ .zf-grid{grid-template-columns:1fr} }
   
-      .ftc-container{max-width:var(--max);margin:0 auto;padding:40px 16px 20px;box-sizing:border-box}
-      .ftc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--gap)}
-      @media (max-width: 1024px){ .ftc-grid{grid-template-columns:repeat(2,1fr)} }
-      @media (max-width: 640px){ .ftc-grid{grid-template-columns:1fr} }
+      .zf-title{color:var(--heading);font-weight:700;font-size:14px;letter-spacing:.2px;margin:0 0 14px}
   
-      .ftc-title{
-        color: var(--heading);
-        font-weight: 700;
-        font-size: 14px;
-        letter-spacing:.2px;
-        margin: 0 0 14px;
-      }
+      /* brands list */
+      .zf-brand{display:flex;gap:12px;align-items:flex-start;margin:0 0 14px}
+      .zf-brand .thumb{width:38px;height:38px;border-radius:999px;overflow:hidden;flex:0 0 38px;background:#2b2b2b;display:flex;align-items:center;justify-content:center}
+      .zf-brand .thumb img{width:100%;height:100%;object-fit:cover}
+      .zf-brand .meta{display:flex;flex-direction:column;gap:4px}
+      .zf-brand .name{color:#fff;font-weight:700;font-size:13px;line-height:1.2}
+      .zf-brand .desc{color:var(--muted);font-size:12px;line-height:1.4}
+      .zf-brand .link{color:var(--link);text-decoration:none;font-size:12px;font-weight:700}
+      .zf-brand .link:hover{color:var(--link_hover)}
   
-      /* BRANDS */
-      .ftc-brand{display:flex;gap:12px;align-items:flex-start;margin:0 0 14px}
-      .ftc-brand .thumb{
-        width: 38px; height: 38px; border-radius: 999px; overflow:hidden; flex:0 0 38px;
-        background:#2b2b2b; display:flex; align-items:center; justify-content:center;
-      }
-      .ftc-brand .thumb img{width:100%;height:100%;object-fit:cover}
-      .ftc-brand .b-meta{display:flex;flex-direction:column;gap:4px}
-      .ftc-brand .b-name{color:#fff;font-weight:700;font-size:13px;line-height:1.2}
-      .ftc-brand .b-desc{color:var(--muted);font-size:12px;line-height:1.4}
-      .ftc-brand .b-link{
-        color: var(--link);
-        text-decoration:none;
-        font-size:12px;font-weight:700;
-      }
-      .ftc-brand .b-link:hover{color:var(--link_hover)}
+      /* link lists */
+      .zf-links ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+      .zf-links a{color:var(--text);text-decoration:none;font-size:13px}
+      .zf-links a:hover{color:var(--link_hover)}
   
-      /* LINKS */
-      .ftc-links ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}
-      .ftc-links a{
-        color: var(--text);
-        text-decoration:none; font-size:13px;
-      }
-      .ftc-links a:hover{color: var(--link_hover)}
+      /* about text */
+      .zf-about{color:var(--muted);font-size:13px;line-height:1.6}
   
-      /* ABOUT */
-      .ftc-about{color: var(--muted); font-size:13px; line-height:1.6}
-  
-      /* DIVIDER + BOTTOM BAR */
-      .ftc-divider{height:1px;background:var(--divider);margin:18px 0 0}
-      .ftc-bottom{max-width:var(--max);margin:0 auto;padding:10px 16px 14px;display:flex;justify-content:space-between;align-items:center;box-sizing:border-box;font-size:12px;color:var(--muted)}
-      @media (max-width:640px){ .ftc-bottom{flex-direction:column;gap:6px; text-align:center} }
-      .ftc-bottom a{color:var(--link);text-decoration:none}
-      .ftc-bottom a:hover{color:var(--link_hover)}
+      /* bottom */
+      .zf-divider{height:1px;background:var(--divider);margin:18px 0 0}
+      .zf-bottom{max-width:var(--max);margin:0 auto;padding:10px 16px 14px;display:flex;justify-content:space-between;align-items:center;box-sizing:border-box;font-size:12px;color:var(--muted)}
+      @media (max-width:640px){ .zf-bottom{flex-direction:column;gap:6px;text-align:center} }
+      .zf-bottom a{color:var(--link);text-decoration:none}
+      .zf-bottom a:hover{color:var(--link_hover)}
     </style>
   
-    <div class="ftc-wrap-{{ section.id }}">
-      <div class="ftc-container">
-        <div class="ftc-grid">
-          <!-- Column 1: Our Brands -->
-          <div class="ftc-col">
-            <h4 class="ftc-title">{{ section.settings.brands_heading }}</h4>
+    <div class="zf-wrap-{{ section.id }}">
+      <div class="zf-container">
+        <div class="zf-grid">
+          <!-- col 1: brands -->
+          <div>
+            <h4 class="zf-title">{{ section.settings.brands_heading }}</h4>
             {% for block in section.blocks %}
               {% if block.type == 'brand' %}
-                <div class="ftc-brand" {{ block.shopify_attributes }}>
+                <div class="zf-brand" {{ block.shopify_attributes }}>
                   <div class="thumb">
                     {% if block.settings.image != blank %}
                       <img src="{{ block.settings.image | image_url: width: 80, height: 80, crop: 'center' }}" alt="{{ block.settings.title | escape }}">
                     {% endif %}
                   </div>
-                  <div class="b-meta">
-                    {% if block.settings.title != blank %}<div class="b-name">{{ block.settings.title }}</div>{% endif %}
-                    {% if block.settings.desc != blank %}<div class="b-desc">{{ block.settings.desc }}</div>{% endif %}
-                    {% if block.settings.link_url != blank and block.settings.link_label != blank %}
-                      <a class="b-link" href="{{ block.settings.link_url }}">{{ block.settings.link_label }}</a>
+                  <div class="meta">
+                    {% if block.settings.title != blank %}<div class="name">{{ block.settings.title }}</div>{% endif %}
+                    {% if block.settings.desc  != blank %}<div class="desc">{{ block.settings.desc  }}</div>{% endif %}
+                    {% if block.settings.link_url and block.settings.link_label %}
+                      <a class="link" href="{{ block.settings.link_url }}">{{ block.settings.link_label }}</a>
                     {% endif %}
                   </div>
                 </div>
@@ -97,17 +79,15 @@
             {% endfor %}
           </div>
   
-          <!-- Column 2: About -->
-          <div class="ftc-col">
-            <h4 class="ftc-title">{{ section.settings.about_heading }}</h4>
-            <div class="ftc-about">
-              {{ section.settings.about_richtext }}
-            </div>
+          <!-- col 2: about -->
+          <div>
+            <h4 class="zf-title">{{ section.settings.about_heading }}</h4>
+            <div class="zf-about">{{ section.settings.about_richtext }}</div>
           </div>
   
-          <!-- Column 3: Quick Links -->
-          <div class="ftc-col ftc-links">
-            <h4 class="ftc-title">{{ section.settings.quick_heading }}</h4>
+          <!-- col 3: quick links -->
+          <div class="zf-links">
+            <h4 class="zf-title">{{ section.settings.quick_heading }}</h4>
             {% if section.settings.quick_menu %}
               <ul>
                 {% for link in linklists[section.settings.quick_menu].links %}
@@ -117,9 +97,9 @@
             {% endif %}
           </div>
   
-          <!-- Column 4: Policies -->
-          <div class="ftc-col ftc-links">
-            <h4 class="ftc-title">{{ section.settings.policies_heading }}</h4>
+          <!-- col 4: policies -->
+          <div class="zf-links">
+            <h4 class="zf-title">{{ section.settings.policies_heading }}</h4>
             {% if section.settings.policies_menu %}
               <ul>
                 {% for link in linklists[section.settings.policies_menu].links %}
@@ -131,9 +111,9 @@
         </div>
       </div>
   
-      <div class="ftc-divider"></div>
+      <div class="zf-divider"></div>
   
-      <div class="ftc-bottom">
+      <div class="zf-bottom">
         <div class="l">
           {% if section.settings.copyright_text != blank %}
             {{ section.settings.copyright_text }}
@@ -152,8 +132,7 @@
   
   {% schema %}
   {
-    "name": "Footer (Custom)",
-    "enabled_on": { "groups": ["footer"], "templates": ["*"] },
+    "name": "Z Footer",
     "settings": [
       { "type": "range", "id": "max_width", "min": 960, "max": 1600, "step": 20, "label": "Content max width (px)", "default": 1200 },
   
@@ -166,20 +145,16 @@
       { "type": "color", "id": "divider", "label": "Divider color", "default": "#2a2a2a" },
       { "type": "range", "id": "col_gap", "min": 10, "max": 40, "step": 2, "label": "Column gap (px)", "default": 28 },
   
-      { "type": "header", "content": "Headings" },
       { "type": "text", "id": "brands_heading", "label": "Brands column title", "default": "Our Brands" },
       { "type": "text", "id": "about_heading", "label": "About column title", "default": "About Us" },
       { "type": "text", "id": "quick_heading", "label": "Quick Links title", "default": "Quick Links" },
       { "type": "text", "id": "policies_heading", "label": "Policies title", "default": "Policies" },
   
-      { "type": "header", "content": "About content" },
       { "type": "richtext", "id": "about_richtext", "label": "About text", "default": "<p>Write a short paragraph about your store, your mission and what you offer customers. Keep it concise and friendly.</p>" },
   
-      { "type": "header", "content": "Menus" },
       { "type": "link_list", "id": "quick_menu", "label": "Quick links menu" },
       { "type": "link_list", "id": "policies_menu", "label": "Policies menu" },
   
-      { "type": "header", "content": "Bottom bar" },
       { "type": "richtext", "id": "copyright_text", "label": "Left text (copyright)", "default": "" },
       { "type": "richtext", "id": "bottom_note", "label": "Right text (note / credits)", "default": "" }
     ],
@@ -197,7 +172,7 @@
       }
     ],
     "presets": [
-      { "name": "Footer (Custom)", "category": "Footer" }
+      { "name": "Z Footer", "category": "Custom" }
     ]
   }
   {% endschema %}
