@@ -1,8 +1,6 @@
 {% comment %}
   File: sections/brand-strip.liquid
-  Brand logos with:
-  - Carousel mode (looping, per-view, arrows, dots, autoplay)
-  - Marquee mode (seamless scroll)
+  Brand logos carousel powered by Swiper (looping, responsive, autoplay).
 {% endcomment %}
 
 <section class="brand-strip" data-section-id="{{ section.id }}" style="background: {{ section.settings.bg }}">
@@ -13,242 +11,155 @@
         margin: 0 auto;
         padding: {{ section.settings.v_pad }}px {% if section.settings.full_width %}0{% else %}16px{% endif %};
         box-sizing: border-box;
-        overflow: hidden;
       }
   
-      /* shared */
-      #bs-viewport-{{ section.id }}{ overflow: hidden; position: relative; }
-      #bs-track-{{ section.id }}{
-        display: flex; align-items: center; gap: {{ section.settings.gap }}px;
-        will-change: transform; transition: transform .35s ease;
+      /* swiper sizing */
+      #bs-swiper-{{ section.id }} { width: 100%; }
+      #bs-swiper-{{ section.id }} .swiper-slide {
+        display:flex; align-items:center; justify-content:center;
       }
-      #bs-track-{{ section.id }} .bs-item{ flex: 0 0 auto; display:flex; align-items:center; justify-content:center; }
-      #bs-track-{{ section.id }} .bs-item a{ display:inline-flex; align-items:center; justify-content:center; text-decoration:none; }
-      #bs-track-{{ section.id }} .bs-img{
+      #bs-swiper-{{ section.id }} .bs-link { display:inline-flex; align-items:center; justify-content:center; text-decoration:none; }
+  
+      /* logo image */
+      #bs-swiper-{{ section.id }} .bs-img{
         height: {{ section.settings.logo_height }}px; width:auto; max-width: 180px; object-fit:contain; display:block;
         {% if section.settings.grayscale %} filter: grayscale(1); opacity:.85; {% endif %}
         transition: opacity .2s ease, filter .2s ease, transform .2s ease;
       }
-      #bs-track-{{ section.id }} .bs-item:hover .bs-img{
+      #bs-swiper-{{ section.id }} .swiper-slide:hover .bs-img{
         {% if section.settings.grayscale %} filter:none; opacity:1; {% else %} opacity:1; {% endif %}
         transform: translateY(-1px);
       }
   
-      /* ----- MARQUEE MODE ----- */
-      {% if section.settings.mode == 'marquee' %}
-        #bs-track-{{ section.id }}{ animation: bs-scroll-{{ section.id }} {{ section.settings.speed }}s linear infinite; }
-        .brand-strip:hover #bs-track-{{ section.id }}{ animation-play-state: paused; }
-        @keyframes bs-scroll-{{ section.id }}{ 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
-      {% endif %}
+      /* arrows */
+      #bs-wrap-{{ section.id }} .swiper-button-prev,
+      #bs-wrap-{{ section.id }} .swiper-button-next{
+        width:36px; height:36px; border-radius:999px; background:#fff; border:1px solid #e5e7eb; color:#111;
+        box-shadow:0 2px 8px rgba(0,0,0,.08);
+      }
+      #bs-wrap-{{ section.id }} .swiper-button-prev:after,
+      #bs-wrap-{{ section.id }} .swiper-button-next:after{ font-size:16px; }
   
-      /* ----- CAROUSEL MODE ----- */
-      {% if section.settings.mode == 'carousel' %}
-        /* item width based on per-view */
-        #bs-viewport-{{ section.id }} .bs-item{
-          flex-basis: calc((100% - {{ section.settings.gap }}px * (var(--bs-per, {{ section.settings.per_desktop }}) - 1)) / var(--bs-per, {{ section.settings.per_desktop }}));
-        }
-        /* set per-view by breakpoint via CSS var */
-        #bs-viewport-{{ section.id }}{ --bs-per: {{ section.settings.per_desktop }}; }
-        @media (max-width: 990px){ #bs-viewport-{{ section.id }}{ --bs-per: {{ section.settings.per_tablet }}; } }
-        @media (max-width: 640px){ #bs-viewport-{{ section.id }}{ --bs-per: {{ section.settings.per_mobile }}; } }
+      {% unless section.settings.show_arrows %}
+        #bs-wrap-{{ section.id }} .swiper-button-prev,
+        #bs-wrap-{{ section.id }} .swiper-button-next{ display:none; }
+      {% endunless %}
   
-        /* arrows */
-        #bs-viewport-{{ section.id }} .bs-arrow{
-          position:absolute; top:50%; transform:translateY(-50%);
-          background:#ffffff; border:1px solid #e5e7eb; border-radius:999px; width:36px; height:36px;
-          display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:2;
-          box-shadow:0 2px 8px rgba(0,0,0,.08);
-        }
-        #bs-viewport-{{ section.id }} .bs-prev{ left: 8px; }
-        #bs-viewport-{{ section.id }} .bs-next{ right: 8px; }
-        {% unless section.settings.show_arrows %}#bs-viewport-{{ section.id }} .bs-arrow{ display:none }{% endunless %}
+      /* dots */
+      #bs-wrap-{{ section.id }} .swiper-pagination-bullets{ margin-top:10px; position:static; }
+      #bs-wrap-{{ section.id }} .swiper-pagination-bullet{ width:8px; height:8px; background:#cfd3d9; opacity:1; }
+      #bs-wrap-{{ section.id }} .swiper-pagination-bullet-active{ background:#ff5a1f; }
   
-        /* dots */
-        #bs-dots-{{ section.id }}{ display:flex; gap:8px; justify-content:center; margin-top:10px; }
-        #bs-dots-{{ section.id }} .dot{
-          width:8px; height:8px; border-radius:50%; background:#cfd3d9; cursor:pointer;
-        }
-        #bs-dots-{{ section.id }} .dot.active{ background:#ff5a1f; }
-        {% unless section.settings.show_dots %}#bs-dots-{{ section.id }}{ display:none }{% endunless %}
-      {% endif %}
+      {% unless section.settings.show_dots %}
+        #bs-wrap-{{ section.id }} .swiper-pagination{ display:none; }
+      {% endunless %}
     </style>
   
-    {%- comment -%} Count originals and cap by max_items for reliable paging & dots {%- endcomment -%}
-    {% assign original_count = 0 %}
+    {%- comment -%} Count available logos and cap by max_items {%- endcomment -%}
+    {% assign bs_count = 0 %}
     {% for block in section.blocks %}
       {% if block.type == 'logo' and block.settings.logo != blank %}
-        {% assign original_count = original_count | plus: 1 %}
+        {% assign bs_count = bs_count | plus: 1 %}
       {% endif %}
     {% endfor %}
-    {% if section.settings.max_items > 0 and section.settings.max_items < original_count %}
-      {% assign original_count = section.settings.max_items %}
+    {% if section.settings.max_items > 0 and section.settings.max_items < bs_count %}
+      {% assign bs_count = section.settings.max_items %}
     {% endif %}
   
     <div id="bs-wrap-{{ section.id }}">
-      <div id="bs-viewport-{{ section.id }}">
-        {% if section.settings.mode == 'carousel' and section.settings.show_arrows %}
-          <button type="button" class="bs-arrow bs-prev" aria-label="Previous">‹</button>
-          <button type="button" class="bs-arrow bs-next" aria-label="Next">›</button>
-        {% endif %}
-  
-        <div id="bs-track-{{ section.id }}"
-             aria-label="Brand logos"
-             data-mode="{{ section.settings.mode }}"
-             data-speed="{{ section.settings.speed }}"
-             data-autoplay="{{ section.settings.autoplay }}"
-             data-interval="{{ section.settings.autoplay_ms }}"
-             data-per-desktop="{{ section.settings.per_desktop }}"
-             data-per-tablet="{{ section.settings.per_tablet }}"
-             data-per-mobile="{{ section.settings.per_mobile }}"
-             data-original="{{ original_count }}">
-          {%- assign max_items = section.settings.max_items | default: 0 -%}
-          {%- assign rendered = 0 -%}
-  
-          {%- if section.settings.mode == 'marquee' -%}
-            {%- for pass in (1..2) -%}
-              {%- for block in section.blocks -%}
-                {%- if block.type == 'logo' and block.settings.logo != blank -%}
-                  {%- if max_items == 0 or rendered < max_items -%}
-                    <div class="bs-item" {{ block.shopify_attributes }}>
-                      {%- if block.settings.url != blank -%}
-                        <a href="{{ block.settings.url }}" aria-label="{{ block.settings.alt | escape }}">
-                          <img class="bs-img" src="{{ block.settings.logo | image_url }}" alt="{{ block.settings.alt | escape }}">
-                        </a>
-                      {%- else -%}
-                        <img class="bs-img" src="{{ block.settings.logo | image_url }}" alt="{{ block.settings.alt | escape }}">
-                      {%- endif -%}
-                    </div>
-                    {%- assign rendered = rendered | plus: 1 -%}
-                  {%- endif -%}
-                {%- endif -%}
-              {%- endfor -%}
-            {%- endfor -%}
-          {%- else -%}
-            {%- assign rendered = 0 -%}
-            {%- for block in section.blocks -%}
-              {%- if block.type == 'logo' and block.settings.logo != blank -%}
-                {%- if max_items == 0 or rendered < max_items -%}
-                  <div class="bs-item" {{ block.shopify_attributes }}>
-                    {%- if block.settings.url != blank -%}
-                      <a href="{{ block.settings.url }}" aria-label="{{ block.settings.alt | escape }}">
-                        <img class="bs-img" src="{{ block.settings.logo | image_url }}" alt="{{ block.settings.alt | escape }}">
-                      </a>
-                    {%- else -%}
+      <div id="bs-swiper-{{ section.id }}" class="swiper">
+        <div class="swiper-wrapper">
+          {%- assign shown = 0 -%}
+          {%- for block in section.blocks -%}
+            {%- if block.type == 'logo' and block.settings.logo != blank -%}
+              {%- if section.settings.max_items == 0 or shown < section.settings.max_items -%}
+                <div class="swiper-slide" {{ block.shopify_attributes }}>
+                  {%- if block.settings.url != blank -%}
+                    <a class="bs-link" href="{{ block.settings.url }}" aria-label="{{ block.settings.alt | escape }}">
                       <img class="bs-img" src="{{ block.settings.logo | image_url }}" alt="{{ block.settings.alt | escape }}">
-                    {%- endif -%}
-                  </div>
-                  {%- assign rendered = rendered | plus: 1 -%}
-                {%- endif -%}
+                    </a>
+                  {%- else -%}
+                    <img class="bs-img" src="{{ block.settings.logo | image_url }}" alt="{{ block.settings.alt | escape }}">
+                  {%- endif -%}
+                </div>
+                {%- assign shown = shown | plus: 1 -%}
               {%- endif -%}
-            {%- endfor -%}
-          {%- endif -%}
+            {%- endif -%}
+          {%- endfor -%}
         </div>
-      </div>
   
-      {% if section.settings.mode == 'carousel' %}
-        <div id="bs-dots-{{ section.id }}"></div>
-      {% endif %}
+        {% if section.settings.show_arrows %}
+          <div class="swiper-button-prev"></div>
+          <div class="swiper-button-next"></div>
+        {% endif %}
+        {% if section.settings.show_dots %}
+          <div class="swiper-pagination"></div>
+        {% endif %}
+      </div>
     </div>
   
-    {% if section.settings.mode == 'carousel' %}
+    {%- comment -%} Load Swiper once (safe if multiple sections) {%- endcomment -%}
+    <link id="swiper-css" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css" media="print" onload="this.media='all'">
     <script>
-      (function(){
-        var viewport = document.getElementById("bs-viewport-{{ section.id }}");
-        if(!viewport) return;
-        var track = document.getElementById("bs-track-{{ section.id }}");
-        var items = track ? Array.from(track.children) : [];
-        if(!items.length) return;
-  
-        var prev = viewport.querySelector(".bs-prev");
-        var next = viewport.querySelector(".bs-next");
-        var dotsWrap = document.getElementById("bs-dots-{{ section.id }}");
-  
-        var autoplay = (track.getAttribute("data-autoplay") === "true");
-        var interval = parseInt(track.getAttribute("data-interval") || "5000", 10);
-        var originalCount = parseInt(track.getAttribute("data-original") || items.length, 10);
-  
-        function perView(){
-          var w = viewport.clientWidth;
-          if(w <= 640) return parseInt(track.getAttribute("data-per-mobile"),10);
-          if(w <= 990) return parseInt(track.getAttribute("data-per-tablet"),10);
-          return parseInt(track.getAttribute("data-per-desktop"),10);
-        }
-  
-        // ensure we have enough content to loop (≥ 2 pages)
-        function ensureLoopCapacity(){
-          var pv = perView();
-          var needed = pv * 2;
-          if(items.length >= needed) return;
-          var clonesNeeded = Math.max(needed - items.length, pv); // at least one extra page
-          var base = items.slice(0, Math.min(items.length, clonesNeeded));
-          base.forEach(function(node){
-            var c = node.cloneNode(true);
-            c.classList.add("bs-clone");
-            track.appendChild(c);
-          });
-          items = Array.from(track.children);
-        }
-  
-        function pageCount(){
-          var pv = perView();
-          var count = Math.max(1, Math.ceil(originalCount / pv));
-          // if only one page from originals, ensure we cloned and treat as 2 pages visually
-          return Math.max(2, count);
-        }
-  
-        var page = 0;
-  
-        function go(i){
-          var total = pageCount();
-          page = (i + total) % total;
-          var width = viewport.clientWidth;
-          track.style.transform = "translateX(" + (-page * width) + "px)";
-          updateDots();
-        }
-  
-        function buildDots(){
-          if(!dotsWrap) return;
-          var total = pageCount();
-          dotsWrap.innerHTML = "";
-          for(var i=0;i<total;i++){
-            var d = document.createElement("div");
-            d.className = "dot" + (i===page ? " active" : "");
-            (function(idx){ d.addEventListener("click", function(){ go(idx); }); })(i);
-            dotsWrap.appendChild(d);
-          }
-        }
-        function updateDots(){
-          if(!dotsWrap) return;
-          var ds = dotsWrap.querySelectorAll(".dot");
-          ds.forEach(function(el, idx){ el.classList.toggle("active", idx===page); });
-        }
-  
-        function layout(){
-          ensureLoopCapacity();
-          go(page);
-          buildDots();
-        }
-  
-        if(prev) prev.addEventListener("click", function(){ go(page-1); });
-        if(next) next.addEventListener("click", function(){ go(page+1); });
-  
-        var timer;
-        function startAuto(){
-          if(!autoplay) return;
-          stopAuto();
-          timer = setInterval(function(){ go(page+1); }, interval);
-        }
-        function stopAuto(){ if(timer) clearInterval(timer); }
-  
-        window.addEventListener("resize", function(){ layout(); }, { passive:true });
-        viewport.addEventListener("mouseenter", stopAuto);
-        viewport.addEventListener("mouseleave", startAuto);
-  
-        layout();
-        startAuto();
+      (function loadSwiper(){
+        if(window.Swiper) return;
+        if(document.getElementById('swiper-js')) return;
+        var s=document.createElement('script');
+        s.id='swiper-js'; s.src='https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js'; s.defer=true;
+        document.head.appendChild(s);
       })();
     </script>
-    {% endif %}
+  
+    <script>
+      (function initSwiper(){
+        var tries=0;
+        function start(){
+          if(!window.Swiper){ if(tries++<40) return setTimeout(start,100); else return; }
+  
+          var el = document.getElementById('bs-swiper-{{ section.id }}');
+          if(!el) return;
+  
+          var swiper = new Swiper(el, {
+            loop: {{ section.settings.loop | default: true | json }},
+            speed: {{ section.settings.transition_ms | default: 350 }},
+            spaceBetween: {{ section.settings.gap }},
+            slidesPerView: {{ section.settings.per_desktop }},
+            centeredSlides: false,
+  
+            autoplay: {% if section.settings.autoplay %}{ delay: {{ section.settings.autoplay_ms }}, disableOnInteraction:false, pauseOnMouseEnter:true }{% else %}false{% endif %},
+  
+            navigation: {
+              nextEl: '#bs-wrap-{{ section.id }} .swiper-button-next',
+              prevEl: '#bs-wrap-{{ section.id }} .swiper-button-prev'
+            },
+            pagination: {
+              el: '#bs-wrap-{{ section.id }} .swiper-pagination',
+              clickable: true
+            },
+  
+            breakpoints: {
+              0:   { slidesPerView: {{ section.settings.per_mobile }} },
+              641: { slidesPerView: {{ section.settings.per_tablet }} },
+              991: { slidesPerView: {{ section.settings.per_desktop }} }
+            },
+  
+            // If visible slides >= total, Swiper disables loop.
+            // This keeps loop feeling continuous by enabling freeMode instead.
+            on: {
+              afterInit: function(sw){
+                var total = {{ bs_count }};
+                var pv = sw.params.slidesPerView;
+                if(typeof pv === 'number' && total <= pv){
+                  sw.params.loop = false;
+                  sw.update();
+                }
+              }
+            }
+          });
+        }
+        start();
+      })();
+    </script>
   </section>
   
   {% schema %}
@@ -263,26 +174,21 @@
       { "type": "range", "id": "v_pad", "min": 0, "max": 60, "step": 2, "label": "Vertical padding (px)", "default": 14 },
       { "type": "range", "id": "logo_height", "min": 20, "max": 80, "step": 2, "label": "Logo height (px)", "default": 34 },
       { "type": "range", "id": "gap", "min": 8, "max": 60, "step": 2, "label": "Gap between logos (px)", "default": 36 },
-      { "type": "checkbox", "id": "grayscale", "label": "Grayscale (color on hover)", "default": true },
-  
-      { "type": "select", "id": "mode", "label": "Display mode", "default": "carousel", "options": [
-        { "value": "carousel", "label": "Carousel (slider)" },
-        { "value": "marquee",  "label": "Marquee (seamless auto-scroll)" }
-      ]},
+      { "type": "checkbox", "id": "grayscale", "label": "Grayscale (color on hover)", "default": false },
   
       { "type": "range", "id": "max_items", "min": 0, "max": 100, "step": 1, "label": "Max logos to show (0 = all)", "default": 0 },
   
       { "type": "header", "content": "Carousel options" },
-      { "type": "range", "id": "per_desktop", "min": 2, "max": 10, "step": 1, "label": "Logos per view (desktop)", "default": 8 },
-      { "type": "range", "id": "per_tablet", "min": 2, "max": 8,  "step": 1, "label": "Logos per view (tablet)",  "default": 5 },
+      { "type": "range", "id": "per_desktop", "min": 2, "max": 12, "step": 1, "label": "Logos per view (desktop)", "default": 8 },
+      { "type": "range", "id": "per_tablet", "min": 2, "max": 10, "step": 1, "label": "Logos per view (tablet)",  "default": 5 },
       { "type": "range", "id": "per_mobile", "min": 1, "max": 6,  "step": 1, "label": "Logos per view (mobile)",  "default": 3 },
+  
       { "type": "checkbox", "id": "show_arrows", "label": "Show arrows", "default": true },
       { "type": "checkbox", "id": "show_dots", "label": "Show dots", "default": false },
+      { "type": "checkbox", "id": "loop", "label": "Loop", "default": true },
       { "type": "checkbox", "id": "autoplay", "label": "Autoplay", "default": true },
       { "type": "range", "id": "autoplay_ms", "min": 2000, "max": 9000, "step": 500, "label": "Autoplay interval (ms)", "default": 5000 },
-  
-      { "type": "header", "content": "Marquee options" },
-      { "type": "range", "id": "speed", "min": 12, "max": 60, "step": 1, "label": "Marquee duration (seconds)", "default": 28 }
+      { "type": "range", "id": "transition_ms", "min": 150, "max": 1000, "step": 50, "label": "Transition speed (ms)", "default": 350 }
     ],
     "blocks": [
       {
