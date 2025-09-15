@@ -9,22 +9,22 @@
  */
 {
   "sections": {
-    "hero_area_gETiR6": {
+    "hero_area_jpzYcr": {
       "type": "hero-area",
       "blocks": {
-        "slide_aphijP": {
+        "slide_UgHHmc": {
           "type": "slide",
           "settings": {
             "bg": "shopify://shop_images/Mask_group.jpg",
             "title": "Welcome to Tank Folk",
             "text": "Discover a World Beneath the Surface – From Exotic Fish to Premium Aquarium Supplies.",
             "btn_label": "Explore Products",
-            "btn_link": "#"
+            "btn_link": ""
           }
         }
       },
       "block_order": [
-        "slide_aphijP"
+        "slide_UgHHmc"
       ],
       "name": "Hero Area",
       "settings": {}
@@ -225,7 +225,7 @@
     }
   },
   "order": [
-    "hero_area_gETiR6",
+    "hero_area_jpzYcr",
     "product_list_fa6P9H"
   ]
 }
