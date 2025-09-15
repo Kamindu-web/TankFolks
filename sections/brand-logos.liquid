@@ -1,6 +1,6 @@
 {% comment %}
-  File: sections/logo-carousel.liquid
-  Seamless, auto-scrolling logo carousel (brand strip).
+  File: sections/brand-logos.liquid
+  Seamless, auto-scrolling brand logo carousel (marquee).
 {% endcomment %}
 
 <section class="logo-carousel" data-section-id="{{ section.id }}">
@@ -79,7 +79,7 @@
   
   {% schema %}
   {
-    "name": "Logo Carousel",
+    "name": "Brand Logos (Carousel)",
     "enabled_on": { "templates": ["*"] },
     "settings": [
       { "type": "range", "id": "max_width", "min": 960, "max": 1600, "step": 20, "label": "Content max width (match header)", "default": 1200 },
@@ -101,7 +101,7 @@
         ]
       }
     ],
-    "presets": [{ "name": "Logo Carousel", "category": "Logos" }]
+    "presets": [{ "name": "Brand Logos (Carousel)", "category": "Custom" }]
   }
   {% endschema %}
   
