@@ -71,6 +71,112 @@
         "radius": 14
       }
     },
+    "brand_strip_Mxqybx": {
+      "type": "brand-strip",
+      "blocks": {
+        "logo_aCRnt7": {
+          "type": "logo",
+          "settings": {
+            "logo": "shopify://shop_images/Chihiros-2_1.png",
+            "alt": "Brand logo",
+            "url": ""
+          }
+        },
+        "logo_XWVzEi": {
+          "type": "logo",
+          "settings": {
+            "logo": "shopify://shop_images/aquariologo_1.png",
+            "alt": "Brand logo",
+            "url": ""
+          }
+        },
+        "logo_mhUtJ3": {
+          "type": "logo",
+          "settings": {
+            "logo": "shopify://shop_images/Aquaforest_1.png",
+            "alt": "Brand logo",
+            "url": ""
+          }
+        },
+        "logo_H9Ynpx": {
+          "type": "logo",
+          "settings": {
+            "logo": "shopify://shop_images/Waterbox_Logo-4_1.png",
+            "alt": "Brand logo",
+            "url": ""
+          }
+        },
+        "logo_p3fe9L": {
+          "type": "logo",
+          "settings": {
+            "logo": "shopify://shop_images/Tropical_1.png",
+            "alt": "Brand logo",
+            "url": ""
+          }
+        },
+        "logo_B9qUnz": {
+          "type": "logo",
+          "settings": {
+            "logo": "shopify://shop_images/the-2hr-aquarist-logo-200_c72913_1.png",
+            "alt": "Brand logo",
+            "url": ""
+          }
+        },
+        "logo_nYFDzp": {
+          "type": "logo",
+          "settings": {
+            "logo": "shopify://shop_images/RF_logo_white_bg_e810195e-60a2-48fa-b0c6-97bf8888accd.png",
+            "alt": "Brand logo",
+            "url": ""
+          }
+        },
+        "logo_BLjzJ9": {
+          "type": "logo",
+          "settings": {
+            "logo": "shopify://shop_images/Pacific_Sun-2_1.png",
+            "alt": "Brand logo",
+            "url": ""
+          }
+        },
+        "logo_WjwqpQ": {
+          "type": "logo",
+          "settings": {
+            "logo": "shopify://shop_images/logo.png",
+            "alt": "Brand logo",
+            "url": ""
+          }
+        },
+        "logo_XDhagE": {
+          "type": "logo",
+          "settings": {
+            "logo": "shopify://shop_images/Coral_Care_1.png",
+            "alt": "Brand logo",
+            "url": ""
+          }
+        }
+      },
+      "block_order": [
+        "logo_aCRnt7",
+        "logo_XWVzEi",
+        "logo_mhUtJ3",
+        "logo_H9Ynpx",
+        "logo_p3fe9L",
+        "logo_B9qUnz",
+        "logo_nYFDzp",
+        "logo_BLjzJ9",
+        "logo_WjwqpQ",
+        "logo_XDhagE"
+      ],
+      "name": "Brand Logos (Basic)",
+      "settings": {
+        "max_width": 1200,
+        "bg": "#ffffff",
+        "v_pad": 14,
+        "logo_height": 34,
+        "gap": 36,
+        "grayscale": true
+      }
+    },
     "product_list_fa6P9H": {
       "type": "product-list",
       "blocks": {
@@ -269,6 +375,7 @@
   "order": [
     "hero_area_jpzYcr",
     "floating_search_e7pmJB",
+    "brand_strip_Mxqybx",
     "product_list_fa6P9H"
   ]
 }
