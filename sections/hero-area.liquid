@@ -1,77 +1,26 @@
-{% comment %}
-  File: sections/hero-area.liquid
-  Hero carousel with content constrained to the same container width as header.
-  - Per-slide: background, title, text, button, up to 4 icons
-  - Icons live inside the container (right side), not at full-bleed edge
-{% endcomment %}
-
 <section class="hero-area" data-section-id="{{ section.id }}">
     <style>
-      :root{
-        --hero-max: {{ section.settings.max_width | default: 1200 }};
-        --hero-height: {{ section.settings.height_desktop | default: 540 }}px;
-        --hero-height-mobile: {{ section.settings.height_mobile | default: 420 }}px;
-        --hero-title-size: {{ section.settings.title_size | default: 42 }}px;
-        --hero-text-size: {{ section.settings.text_size | default: 16 }}px;
-        --hero-btn-bg: {{ section.settings.btn_bg | default: '#ff5a1f' }};
-        --hero-btn-color: {{ section.settings.btn_color | default: '#ffffff' }};
-        --hero-overlay: {{ section.settings.overlay | default: 'linear-gradient(90deg, rgba(0,0,0,.55), rgba(0,0,0,.15) 45%, rgba(0,0,0,0))' }};
-        --hero-radius: {{ section.settings.icon_radius | default: 8 }}px;
-      }
       .hero-area{position:relative;overflow:hidden}
-      .hero-container{max-width:calc(var(--hero-max)*1px);margin:0 auto;padding:0 16px;box-sizing:border-box} 
+      .hero-container{max-width:1200px;margin:0 auto;padding:0 16px;box-sizing:border-box}
+      .hero-slide{position:relative;min-height:540px;color:#fff;background-size:cover;background-position:center}
+      .hero-slide::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.55),rgba(0,0,0,.15) 45%,rgba(0,0,0,0));z-index:0}
   
-      .hero-slider{position:relative}
-      .hero-slide{
-        position:relative;
-        min-height:var(--hero-height);
-        color:#fff;
-        display:block;
-        background-size:cover;background-position:center;
-      }
-      .hero-slide::before{
-        content:"";position:absolute;inset:0;background:var(--hero-overlay);z-index:0
-      }
-  
-      /* Content constrained by the same container as header */
-      .hero-inner{
-        position:relative;z-index:1;
-        height:var(--hero-height);
-        display:flex;align-items:center;
-      }
+      .hero-inner{position:relative;z-index:1;height:540px;display:flex;align-items:center}
       .hero-content{max-width:560px}
-      .hero-content h2{font-size:var(--hero-title-size);line-height:1.08;font-weight:700;margin:0 0 12px}
-      .hero-content p{font-size:var(--hero-text-size);line-height:1.55;margin:0 0 20px;opacity:.95}
-      .hero-btn{display:inline-block;background:var(--hero-btn-bg);color:var(--hero-btn-color);padding:12px 22px;border-radius:6px;text-decoration:none;font-weight:700}
+      .hero-content h2{font-size:42px;font-weight:700;margin:0 0 12px}
+      .hero-content p{font-size:16px;line-height:1.5;margin:0 0 20px}
+      .hero-btn{display:inline-block;background:#ff5a1f;color:#fff;padding:12px 22px;border-radius:6px;text-decoration:none;font-weight:700}
   
-      /* Icons live inside the same container, aligned right */
-      .hero-icons{
-        margin-left:auto; /* push to right inside container */
-        display:flex;flex-direction:column;gap:16px;
-      }
-      .hero-icon{
-        width:48px;height:48px;border:1px solid rgba(255,255,255,.45);
-        border-radius:var(--hero-radius);padding:6px;
-        background:rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center
-      }
+      .hero-icons{margin-left:auto;display:flex;flex-direction:column;gap:16px}
+      .hero-icon{width:48px;height:48px;border:1px solid rgba(255,255,255,.4);border-radius:8px;padding:6px;background:rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center}
       .hero-icon img{max-width:100%;max-height:100%;object-fit:contain;display:block}
   
-      /* Dots */
       .hero-nav{position:absolute;left:50%;transform:translateX(-50%);bottom:14px;display:flex;gap:10px;z-index:2}
       .hero-dot{width:10px;height:10px;border-radius:50%;background:#fff;opacity:.5;cursor:pointer}
-      .hero-dot.active{opacity:1;background:var(--hero-btn-bg)}
+      .hero-dot.active{opacity:1;background:#ff5a1f}
   
-      /* Visibility for basic slider */
       .hero-slide{display:none}
       .hero-slide.active{display:block}
-  
-      @media (max-width: 768px){
-        .hero-slide{min-height:var(--hero-height-mobile)}
-        .hero-inner{height:var(--hero-height-mobile);align-items:flex-end;padding:24px 0}
-        .hero-icons{display:none} /* hide icons on small screens to keep it clean */
-        .hero-content h2{font-size:calc(var(--hero-title-size)*.74)}
-        .hero-content p{font-size:calc(var(--hero-text-size)*.95)}
-      }
     </style>
   
     <div class="hero-slider" id="hero-slider-{{ section.id }}">
@@ -90,14 +39,11 @@
                   <a class="hero-btn" href="{{ block.settings.btn_link }}">{{ block.settings.btn_label }}</a>
                 {% endif %}
               </div>
-  
               <div class="hero-icons">
                 {% for i in (1..4) %}
                   {% assign icon = 'icon' | append: i %}
                   {% if block.settings[icon] != blank %}
-                    <span class="hero-icon">
-                      <img src="{{ block.settings[icon] | image_url }}" alt="icon {{ i }}">
-                    </span>
+                    <span class="hero-icon"><img src="{{ block.settings[icon] | image_url }}" alt="icon {{ i }}"></span>
                   {% endif %}
                 {% endfor %}
               </div>
@@ -119,9 +65,7 @@
         if(!root) return;
         var slides = root.querySelectorAll(".hero-slide");
         var dots = root.querySelectorAll(".hero-dot");
-        if(!slides.length) return;
-        var current = 0, delay = {{ section.settings.autoplay_ms | default: 6000 }};
-  
+        var current = 0;
         function showSlide(i){
           slides[current].classList.remove("active");
           dots[current].classList.remove("active");
@@ -130,13 +74,7 @@
           dots[current].classList.add("active");
         }
         dots.forEach((dot,i)=>dot.addEventListener("click",()=>showSlide(i)));
-  
-        if({{ section.settings.autoplay | json }}){
-          setInterval(function(){
-            var next = (current+1) % slides.length;
-            showSlide(next);
-          }, delay);
-        }
+        setInterval(()=>showSlide((current+1)%slides.length),6000);
       })();
     </script>
   </section>
@@ -144,19 +82,7 @@
   {% schema %}
   {
     "name": "Hero Area",
-    "settings": [
-      { "type": "range", "id": "max_width", "min": 960, "max": 1440, "step": 20, "unit": "px", "label": "Content max width (match header)", "default": 1200 },
-      { "type": "range", "id": "height_desktop", "min": 420, "max": 760, "step": 10, "unit": "px", "label": "Height (desktop)", "default": 540 },
-      { "type": "range", "id": "height_mobile", "min": 320, "max": 560, "step": 10, "unit": "px", "label": "Height (mobile)", "default": 420 },
-      { "type": "range", "id": "title_size", "min": 28, "max": 64, "step": 2, "unit": "px", "label": "Title size", "default": 42 },
-      { "type": "range", "id": "text_size", "min": 12, "max": 22, "step": 1, "unit": "px", "label": "Text size", "default": 16 },
-      { "type": "color", "id": "btn_bg", "label": "Button background", "default": "#ff5a1f" },
-      { "type": "color", "id": "btn_color", "label": "Button text color", "default": "#ffffff" },
-      { "type": "text", "id": "overlay", "label": "Overlay CSS (gradient)", "default": "linear-gradient(90deg, rgba(0,0,0,.55), rgba(0,0,0,.15) 45%, rgba(0,0,0,0))" },
-      { "type": "range", "id": "icon_radius", "min": 0, "max": 16, "step": 1, "unit": "px", "label": "Icon corner radius", "default": 8 },
-      { "type": "checkbox", "id": "autoplay", "label": "Autoplay", "default": true },
-      { "type": "range", "id": "autoplay_ms", "min": 3000, "max": 12000, "step": 500, "unit": "ms", "label": "Autoplay interval", "default": 6000 }
-    ],
+    "settings": [],
     "blocks": [
       {
         "type": "slide",
@@ -174,9 +100,7 @@
         ]
       }
     ],
-    "presets": [
-      { "name": "Hero Area", "category": "Hero" }
-    ]
+    "presets": [{ "name": "Hero Area", "category": "Hero" }]
   }
   {% endschema %}
   
