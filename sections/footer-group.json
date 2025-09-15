@@ -11,6 +11,30 @@
   "type": "footer",
   "name": "Footer",
   "sections": {
+    "footer_custom_ribBQK": {
+      "type": "footer-custom",
+      "name": "Footer (Custom)",
+      "settings": {
+        "max_width": 1200,
+        "bg": "#181818",
+        "text": "#e8e8e8",
+        "muted": "#b3b3b3",
+        "heading": "#ffffff",
+        "link": "#ff5a1f",
+        "link_hover": "#ffa37f",
+        "divider": "#2a2a2a",
+        "col_gap": 28,
+        "brands_heading": "Our Brands",
+        "about_heading": "About Us",
+        "quick_heading": "Quick Links",
+        "policies_heading": "Policies",
+        "about_richtext": "<p>Write a short paragraph about your store, your mission and what you offer customers. Keep it concise and friendly.</p>",
+        "quick_menu": "",
+        "policies_menu": "",
+        "copyright_text": "<p> </p>",
+        "bottom_note": "<p> </p>"
+      }
+    },
     "footer": {
       "type": "footer",
       "blocks": {
@@ -55,6 +79,7 @@
             "border_width": 1,
             "border_opacity": 100,
             "border_radius": 0,
+            "placeholder": "",
             "toggle_overlay": false,
             "overlay_color": "#00000026",
             "overlay_style": "solid",
@@ -94,6 +119,7 @@
                 "border_width": 1,
                 "border_opacity": 100,
                 "border_radius": 0,
+                "placeholder": "",
                 "toggle_overlay": false,
                 "overlay_color": "#00000026",
                 "overlay_style": "solid",
@@ -169,6 +195,8 @@
                 "width": "custom",
                 "custom_width": 50,
                 "inherit_color_scheme": true,
+                "heading": "",
+                "heading_preset": "h3",
                 "color_scheme": "scheme-1",
                 "border_style": "all",
                 "border_width": 1,
@@ -205,6 +233,7 @@
               "type": "_footer-copyright",
               "static": true,
               "settings": {
+                "show_powered_by": true,
                 "font_size": "0.75rem",
                 "case": "none"
               },
@@ -282,6 +311,7 @@
         "group_tbFfTQ",
         "footer_utilities_KRaGcH"
       ],
+      "disabled": true,
       "name": "Footer",
       "settings": {
         "content_direction": "column",
@@ -304,6 +334,7 @@
     }
   },
   "order": [
+    "footer_custom_ribBQK",
     "footer"
   ]
 }
