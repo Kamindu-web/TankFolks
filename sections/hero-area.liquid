@@ -1,0 +1,153 @@
+{% comment %}
+  File: sections/hero-area.liquid
+  Hero carousel with dynamic slides (title, text, button, icons).
+{% endcomment %}
+
+<section class="hero-area" data-section-id="{{ section.id }}">
+    <style>
+      .hero-area { position: relative; overflow: hidden; }
+      .hero-slide {
+        position: relative;
+        min-height: 500px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        background-size: cover;
+        background-position: center;
+        color: #fff;
+        padding: 60px 20px;
+      }
+      .hero-content {
+        max-width: 500px;
+        z-index: 2;
+      }
+      .hero-content h2 {
+        font-size: 42px;
+        font-weight: 700;
+        margin-bottom: 12px;
+      }
+      .hero-content p {
+        font-size: 16px;
+        margin-bottom: 20px;
+        line-height: 1.5;
+      }
+      .hero-content a.btn {
+        background: #ff5a1f;
+        color: #fff;
+        padding: 12px 24px;
+        border-radius: 4px;
+        text-decoration: none;
+        font-weight: 600;
+      }
+      .hero-icons {
+        position: absolute;
+        right: 40px;
+        top: 50%;
+        transform: translateY(-50%);
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        z-index: 3;
+      }
+      .hero-icons img {
+        width: 44px;
+        height: 44px;
+        object-fit: contain;
+        border: 1px solid rgba(255,255,255,0.4);
+        border-radius: 8px;
+        padding: 6px;
+        background: rgba(0,0,0,0.25);
+      }
+  
+      /* Basic carousel controls */
+      .hero-slider { position: relative; }
+      .hero-slide:not(.active) { display: none; }
+      .hero-nav {
+        position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+        display: flex; gap: 10px;
+      }
+      .hero-dot {
+        width: 10px; height: 10px; border-radius: 50%; background:#fff; opacity:.5; cursor:pointer;
+      }
+      .hero-dot.active { opacity: 1; background:#ff5a1f; }
+    </style>
+  
+    <div class="hero-slider" id="hero-slider-{{ section.id }}">
+      {% for block in section.blocks %}
+        <div class="hero-slide{% if forloop.first %} active{% endif %}" style="background-image:url('{{ block.settings.bg | image_url: width: 1600 }}')">
+          <div class="hero-content">
+            {% if block.settings.title != blank %}
+              <h2>{{ block.settings.title }}</h2>
+            {% endif %}
+            {% if block.settings.text != blank %}
+              <p>{{ block.settings.text }}</p>
+            {% endif %}
+            {% if block.settings.btn_label != blank and block.settings.btn_link != blank %}
+              <a class="btn" href="{{ block.settings.btn_link }}">{{ block.settings.btn_label }}</a>
+            {% endif %}
+          </div>
+          <div class="hero-icons">
+            {% for i in (1..4) %}
+              {% assign icon = 'icon' | append: i %}
+              {% if block.settings[icon] != blank %}
+                <img src="{{ block.settings[icon] | image_url }}" alt="icon {{ i }}">
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+      {% endfor %}
+      <div class="hero-nav">
+        {% for block in section.blocks %}
+          <div class="hero-dot{% if forloop.first %} active{% endif %}" data-slide="{{ forloop.index0 }}"></div>
+        {% endfor %}
+      </div>
+    </div>
+  
+    <script>
+      (function(){
+        var root = document.getElementById("hero-slider-{{ section.id }}");
+        if(!root) return;
+        var slides = root.querySelectorAll(".hero-slide");
+        var dots = root.querySelectorAll(".hero-dot");
+        var current = 0;
+        function showSlide(i){
+          slides[current].classList.remove("active");
+          dots[current].classList.remove("active");
+          current = i;
+          slides[current].classList.add("active");
+          dots[current].classList.add("active");
+        }
+        dots.forEach((dot,i)=>dot.addEventListener("click",()=>showSlide(i)));
+        // Auto rotate
+        setInterval(()=>{ showSlide((current+1)%slides.length); }, 6000);
+      })();
+    </script>
+  </section>
+  
+  {% schema %}
+  {
+    "name": "Hero Area",
+    "settings": [],
+    "blocks": [
+      {
+        "type": "slide",
+        "name": "Slide",
+        "settings": [
+          { "type": "image_picker", "id": "bg", "label": "Background image" },
+          { "type": "text", "id": "title", "label": "Title", "default": "Welcome to Tank Folk" },
+          { "type": "textarea", "id": "text", "label": "Text", "default": "Discover a World Beneath the Surface – From Exotic Fish to Premium Aquarium Supplies." },
+          { "type": "text", "id": "btn_label", "label": "Button label", "default": "Explore Products" },
+          { "type": "url", "id": "btn_link", "label": "Button link" },
+          { "type": "image_picker", "id": "icon1", "label": "Icon 1" },
+          { "type": "image_picker", "id": "icon2", "label": "Icon 2" },
+          { "type": "image_picker", "id": "icon3", "label": "Icon 3" },
+          { "type": "image_picker", "id": "icon4", "label": "Icon 4" }
+        ]
+      }
+    ],
+    "presets": [
+      { "name": "Hero Area", "category": "Hero" }
+    ]
+  }
+  {% endschema %}
+  
