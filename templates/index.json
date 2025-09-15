@@ -197,12 +197,23 @@
         "collection_handle": "frontpage",
         "limit": 8
       }
+    },
+    "custom_product_grid_wVrBBU": {
+      "type": "custom-product-grid",
+      "name": "Product Grid (Basic)",
+      "settings": {
+        "heading": "Featured Products",
+        "max_width": 1200,
+        "collection_handle": "frontpage",
+        "limit": 8
+      }
     }
   },
   "order": [
     "hero_area_jpzYcr",
     "floating_search_e7pmJB",
     "brand_strip_Mxqybx",
-    "custom_product_grid_HGQnVm"
+    "custom_product_grid_HGQnVm",
+    "custom_product_grid_wVrBBU"
   ]
 }
