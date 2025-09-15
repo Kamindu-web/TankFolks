@@ -218,7 +218,7 @@
         "heading": "What's happening now",
         "full_width": false,
         "max_width": 1200,
-        "blog": "",
+        "blog": "learning-centre",
         "limit": 4,
         "show_excerpt": true
       }
